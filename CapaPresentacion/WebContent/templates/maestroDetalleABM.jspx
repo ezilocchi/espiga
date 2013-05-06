@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition template="/templates/maestroDetalle.jspx"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:custom="http://code.google.com/p/sandia-project/custom">	
+	
+	<ui:define name="headerMaestro">
+		<h:panelGrid columns="2" width="100%">
+			<ui:insert name="titleMaestro"></ui:insert>
+			<h:panelGrid style="width:100%;text-align:right;">
+				<h:panelGroup>
+					<a4j:commandButton ajaxSingle="true"
+						reRender="modalPanelMaestro"
+						title="Nuevo" 
+						image="/images/sinonimoSmall.png">
+						<a4j:actionparam assignTo="#{managedBean.actionMaestro}" 
+							value="#{appVariables.actionNEW}"
+							actionListener="#{managedBean.renderPanelMaestro}"></a4j:actionparam>
+					</a4j:commandButton>
+					<a4j:commandLink ajaxSingle="true"
+						reRender="modalPanelMaestro"
+						title="Editar"
+						disabled="#{!managedBean.maestroSelected}"
+						actionListener="#{managedBean.renderPanelMaestro}">
+						<a4j:actionparam assignTo="#{managedBean.actionMaestro}" 
+							value="#{appVariables.actionUPDATE}"
+							actionListener="#{managedBean.renderPanelMaestro}"></a4j:actionparam>
+						<h:graphicImage url="/images/editarSmallBtn.png" rendered="#{managedBean.maestroSelected}" style="border:0px;"></h:graphicImage>
+						<h:graphicImage url="/images/editarSmallBtn-dis.png" rendered="#{!managedBean.maestroSelected}" style="border:0px;"></h:graphicImage>
+					</a4j:commandLink>
+					<a4j:commandLink actionListener="#{managedBean.deleteMaestro}"
+						ajaxSingle="true" 
+						reRender="panel"
+						title="Borrar" 
+						disabled="#{!managedBean.maestroSelected}"
+						onclick="javascript:if (!confirm('Confirma que desea borrar'))return false;">
+						<h:graphicImage url="/images/eliminarSmallBtn.png" rendered="#{managedBean.maestroSelected}" style="border:0px;"></h:graphicImage>
+						<h:graphicImage url="/images/eliminarSmallBtn-dis.png" rendered="#{!managedBean.maestroSelected}" style="border:0px;"></h:graphicImage>
+					</a4j:commandLink>
+					<h:commandLink target="_new" actionListener="#{managedBean.printMaestro}"
+						title="Imprimir" disabled="#{managedBean.maestroSelected}">
+						<h:graphicImage url="/images/icons/Impresora_01_25x25.png" 
+							style="border:0px;" rendered="#{managedBean.maestroSelected}"></h:graphicImage>						
+						<h:graphicImage url="/images/icons/Impresora_03_20x20.png" 
+							style="border:0px;" rendered="#{!managedBean.maestroSelected}"></h:graphicImage>
+					</h:commandLink>
+				</h:panelGroup>
+			</h:panelGrid>
+		</h:panelGrid>			
+	</ui:define>	
+	
+	
+	<ui:define name="contentDetalle">
+		<rich:dataTable value="#{managedBean.detalles.model}"
+			id="entities" var="item" headerClass="rich-table-subheadercell">					
+			<a4j:support event="onRowClick"  reRender="headerDetalle"
+				actionListener="#{managedBean.selectDetalle}"
+				oncomplete="selectRow(this)"/>
+			<f:facet name="header">
+				<h:panelGrid columns="2" width="100%" id="headerDetalle">
+					<ui:insert name="titleDetalle"></ui:insert>
+					<h:panelGrid style="width:100%;text-align:right;">
+						<h:panelGroup>
+							
+							<a4j:commandLink ajaxSingle="true"
+								reRender="modalPanelDetalle"
+								title="Nuevo"
+								disabled="#{!managedBean.maestroSelected}"
+								actionListener="#{managedBean.renderPanelDetalle}">
+								<a4j:actionparam assignTo="#{managedBean.actionDetalle}" 
+									value="#{appVariables.actionNEW}"
+									actionListener="#{managedBean.renderPanelDetalle}"></a4j:actionparam>
+								<h:graphicImage url="/images/sinonimoSmall.png" rendered="#{managedBean.maestroSelected}" style="border:0px;"></h:graphicImage>
+								<h:graphicImage url="/images/sinonimoSmall_Disabled.png" rendered="#{!managedBean.maestroSelected}" style="border:0px;"></h:graphicImage>
+							</a4j:commandLink>
+							<a4j:commandLink ajaxSingle="true"
+								reRender="modalPanelDetalle"
+								title="Editar"
+								disabled="#{!managedBean.detalleSelected}"
+								actionListener="#{managedBean.renderPanelDetalle}">
+								<a4j:actionparam assignTo="#{managedBean.actionDetalle}" 
+									value="#{appVariables.actionUPDATE}"
+									actionListener="#{managedBean.renderPanelDetalle}"></a4j:actionparam>
+								<h:graphicImage url="/images/editarSmallBtn.png" rendered="#{managedBean.detalleSelected}" style="border:0px;"></h:graphicImage>
+								<h:graphicImage url="/images/editarSmallBtn-dis.png" rendered="#{!managedBean.detalleSelected}" style="border:0px;"></h:graphicImage>
+							</a4j:commandLink>
+							<a4j:commandLink actionListener="#{managedBean.deleteDetalle}"
+								ajaxSingle="true" 
+								reRender="panel"
+								title="Borrar" 
+								disabled="#{!managedBean.detalleSelected}"
+								onclick="javascript:if (!confirm('Confirma que desea borrar'))return false;">
+								<h:graphicImage url="/images/eliminarSmallBtn.png" rendered="#{managedBean.detalleSelected}" style="border:0px;"></h:graphicImage>
+								<h:graphicImage url="/images/eliminarSmallBtn-dis.png" rendered="#{!managedBean.detalleSelected}" style="border:0px;"></h:graphicImage>
+							</a4j:commandLink>						
+							<h:commandLink target="_new" 
+								actionListener="#{managedBean.printDetalle}"
+								disabled="#{!managedBean.maestroSelected}"
+								title="Imprimir">
+								<h:graphicImage url="/images/icons/Impresora_01_25x25.png" 
+									style="border:0px;" rendered="#{managedBean.maestroSelected}"></h:graphicImage>
+								<h:graphicImage url="/images/icons/Impresora_03_20x20.png" 
+									style="border:0px;" rendered="#{!managedBean.maestroSelected}"></h:graphicImage>
+							</h:commandLink>					
+						</h:panelGroup>
+					</h:panelGrid>
+				</h:panelGrid>
+			</f:facet>
+			<ui:insert name="tableDetalle"></ui:insert>						
+		</rich:dataTable>
+	</ui:define>
+	
+	<ui:define name="panel">
+		<h:panelGroup id="modalPanelMaestro">
+			<rich:modalPanel  width="550" resizeable="false" moveable="false" autosized="true"
+				rendered="#{managedBean.renderPanelMaestro}" showWhenRendered="true">
+				<f:facet name="header">					
+					<h:outputText value="#{entityTitle}"></h:outputText>
+				</f:facet>
+				<a4j:form>
+					<h:panelGrid columnClasses="marcoColumna" width="100%">
+						<h:panelGrid columns="2" width="100%"
+							columnClasses="ABMColumnLabel,ABMColumnInput">
+							<ui:insert name="panelContentMaestro"></ui:insert>														
+						</h:panelGrid>
+					</h:panelGrid>
+					<h:panelGrid style="width:100%;text-align:right;">
+						<h:panelGroup>
+							<a4j:commandButton value="#{msgs.aceptar}"
+								reRender="modalPanelMaestro,maestro,detalle"
+								actionListener="#{managedBean.acceptMaestro}"></a4j:commandButton>
+							<a4j:commandButton value="#{msgs.cancelar}"
+								ajaxSingle="true" 
+								reRender="modalPanelMaestro,headerMaestro,headerDetalle" 
+								actionListener="#{managedBean.cancelMaestro}"></a4j:commandButton>
+							<a4j:commandButton value="#{msgs.limpiar}"
+								ajaxSingle="true" 
+								reRender="modalPanelMaestro" 
+								type="reset"></a4j:commandButton>
+						</h:panelGroup>
+					</h:panelGrid>
+				</a4j:form>
+			</rich:modalPanel>
+		</h:panelGroup>
+		
+		<h:panelGroup id="modalPanelDetalle">
+			<rich:modalPanel  width="550" resizeable="false" moveable="false" autosized="true"
+				rendered="#{managedBean.renderPanelDetalle}" showWhenRendered="true">
+				<f:facet name="header">
+					<h:outputText value="#{entitiesTitle}"></h:outputText>
+				</f:facet>
+				<a4j:form>
+					<h:panelGrid columnClasses="marcoColumna" width="100%">
+						<h:panelGrid columns="2" width="100%"
+							columnClasses="ABMColumnLabel,ABMColumnInput">
+							<ui:insert name="panelContentDetalle"></ui:insert>														
+						</h:panelGrid>
+					</h:panelGrid>
+					<h:panelGrid style="width:100%;text-align:right;">
+						<h:panelGroup>
+							<a4j:commandButton value="#{msgs.aceptar}"
+								reRender="modalPanelDetalle,detalle"
+								actionListener="#{managedBean.acceptDetalle}"></a4j:commandButton>
+							<a4j:commandButton value="#{msgs.cancelar}"
+								ajaxSingle="true" 
+								reRender="modalPanelDetalle,headerDetalle" 
+								actionListener="#{managedBean.cancelDetalle}"></a4j:commandButton>
+							<a4j:commandButton value="#{msgs.limpiar}"
+								ajaxSingle="true" 
+								reRender="modalPanelDetalle"></a4j:commandButton>
+						</h:panelGroup>
+					</h:panelGrid>
+				</a4j:form>
+			</rich:modalPanel>
+		</h:panelGroup>
+	</ui:define>
+</ui:composition>
+

@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+<ui:composition template="/templates/template.jspx">
+	<ui:define name="title">
+		<h:outputText value="Registrar Distribucion"></h:outputText>
+	</ui:define>
+	<ui:define name="content">
+		<a4j:form>
+			<rich:dataTable value="#{registrarResultadoDistribucionMB.detalle.model }" 
+				var="item" style="text-align: left" id="resultado" rowClasses="resultado">
+				<f:facet name="header">
+					<rich:columnGroup >							
+                    	<rich:column colspan="4">
+                        	<h:outputText value="Repartidor" />
+                        </rich:column>
+					</rich:columnGroup>					
+				</f:facet>				
+				<rich:column colspan="3">					
+					<h:outputText value="#{item.entity.empleado.apellido}, "></h:outputText>
+					<h:outputText value="#{item.entity.empleado.nombres}"></h:outputText>
+					<h:outputText value=" - "></h:outputText>
+					<h:outputText value="Vehiculo: "></h:outputText>
+					<h:outputText value="#{item.entity.vehiculo.marca},  #{item.entity.vehiculo.modelo}, #{item.entity.vehiculo.dominio}"></h:outputText>
+				</rich:column>
+				<rich:column>
+					<h:selectBooleanCheckbox value="#{item.selected}">
+						<a4j:support 
+							event="onchange" 
+							reRender="resultado"
+							ajaxSingle="true" 
+							actionListener="#{registrarResultadoDistribucionMB.selectProducto}"></a4j:support>
+					</h:selectBooleanCheckbox>
+										
+				</rich:column>	
+				
+				<rich:subTable value="#{item.detail }" var="detalle">
+					<rich:column>
+						<f:facet name="header">
+							<h:outputText value="Nro"></h:outputText>
+						</f:facet>
+						<h:outputText value="#{detalle.entity.id}"></h:outputText>
+					</rich:column>		
+					<rich:column>
+						<f:facet name="header">
+							<h:outputText value="Cliente"></h:outputText>
+						</f:facet>
+						<h:outputText value="#{detalle.entity.cliente.razonSocial}"></h:outputText>
+					</rich:column>
+					<rich:column>
+						<f:facet name="header">
+							<h:outputText value="Direccion"></h:outputText>
+						</f:facet>
+						<h:outputText value="#{detalle.entity.cliente.direccion}"></h:outputText>
+					</rich:column>
+					<rich:column>
+						<h:selectBooleanCheckbox value="#{detalle.selected}"></h:selectBooleanCheckbox>						
+					</rich:column>
+					
+				</rich:subTable>
+			</rich:dataTable>
+			<h:panelGrid rowClasses="rowButton" width="100%">
+				<h:panelGroup>
+					<a4j:commandButton value="#{msgs.aceptar}"	action="#{registrarResultadoDistribucionMB.aceptar}"></a4j:commandButton>
+					<a4j:commandButton value="#{msgs.cancelar}" action="#{registrarResultadoDistribucionMB.cancelar}" ajaxSingle="true"></a4j:commandButton>					
+				</h:panelGroup>
+			</h:panelGrid>
+		</a4j:form>		
+	</ui:define>
+</ui:composition>
+</html>

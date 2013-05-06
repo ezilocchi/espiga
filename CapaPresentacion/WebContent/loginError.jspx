@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<rich:panel
+		style="top: 30%; left: 30%; position: absolute; width: 350px; height: 150px;">
+		<f:facet name="header">
+			<h:outputText value="#{msgs.login}"></h:outputText>
+		</f:facet>	
+			<form name="loginForm" method="post" action="#{facesContext.externalContext.requestContextPath}/j_security_check">
+				<table>
+					<tr>
+						<td>User Name:</td>
+						<td><input type="text" name="j_username"></input></td>
+					</tr>
+					<tr>
+						<td>Password:</td>
+						<td><input type="password" name="j_password"></input></td>
+					</tr>
+					<tr>
+						<td/>
+						<td width="100%"><input type="submit" value="Login" style="margin-left: 10%"></input></td>
+					</tr>
+				</table>
+			</form>
+		<h:outputText value="Usuario o Password incorrecto" style="color: red;"></h:outputText>
+	</rich:panel>
+</html>

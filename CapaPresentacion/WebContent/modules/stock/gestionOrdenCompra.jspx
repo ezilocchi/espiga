@@ -1,0 +1,227 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition template="/templates/maestroDetalle.jspx"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:custom="http://code.google.com/p/sandia-project/custom">
+
+	<ui:param name="managedBean" value="#{gestionOrdenCompraMB}"></ui:param>
+
+	<ui:define name="title">
+		<h:outputText value="Gestionar Orden de Compra"></h:outputText>
+	</ui:define>
+
+	<ui:define name="headerMaestro">
+		<h:panelGrid columns="2" width="100%">
+			<h:outputText value="Ordenes de Compra"></h:outputText>
+			<h:panelGrid style="width:100%;text-align:right;">
+				<h:panelGroup>
+					<a4j:commandButton value="Buscar" image="/images/find.png" id="btnLimpiarFiltrar" 
+						reRender="maestro" actionListener="#{gestionOrdenCompraMB.limpiarFiltroMaestro }" title="Limpiar Filtro"></a4j:commandButton>
+					<a4j:commandButton value="Buscar" image="/images/find.png" id="btnFiltrar" 
+						reRender="maestro" actionListener="#{gestionOrdenCompraMB.buscarMaestro }" title="Filtrar"></a4j:commandButton>
+					<a4j:commandButton ajaxSingle="true"
+						title="Nuevo"
+						action="#{generarOrdenCompraMB.init}"
+						image="/images/icons/OrdenCompra_Agregar_20x20.png">									
+					</a4j:commandButton>
+					<a4j:commandLink ajaxSingle="true"
+						title="Registrar Ingreso"						
+						reRender="modalPanel"
+						disabled="#{!managedBean.maestroSelected}"
+						actionListener="#{gestionOrdenCompraMB.confirmarIngreso}">
+						<h:graphicImage url="/images/OrdenCompraEntrante_20x20.png" rendered="#{managedBean.maestroSelected}" style="border:0px;"></h:graphicImage>
+						<h:graphicImage url="/images/OrdenCompraEntranteDisabled_20x20.png" rendered="#{!managedBean.maestroSelected}" style="border:0px;"></h:graphicImage>
+					</a4j:commandLink>					
+					<a4j:commandLink ajaxSingle="true"						
+						title="Editar"
+						disabled="#{!managedBean.maestroSelected}"
+						action="#{generarOrdenCompraMB.modificarOrdenCompra}">
+						<f:setPropertyActionListener value="#{gestionOrdenCompraMB.maestro}" target="#{generarOrdenCompraMB.orden}"/>
+												
+						<h:graphicImage url="/images/editarSmallBtn.png" rendered="#{managedBean.maestroSelected}" style="border:0px;"></h:graphicImage>
+						<h:graphicImage url="/images/editarSmallBtn-dis.png" rendered="#{!managedBean.maestroSelected}" style="border:0px;"></h:graphicImage>
+					</a4j:commandLink>
+					<a4j:commandLink actionListener="#{managedBean.deleteMaestro}"
+						ajaxSingle="true" 
+						reRender="panel"
+						title="Borrar" 
+						disabled="#{!managedBean.maestroSelected}"
+						onclick="javascript:if (!confirm('Confirma que desea borrar'))return false;">
+						<h:graphicImage url="/images/eliminarSmallBtn.png" rendered="#{managedBean.maestroSelected}" style="border:0px;"></h:graphicImage>
+						<h:graphicImage url="/images/eliminarSmallBtn-dis.png" rendered="#{!managedBean.maestroSelected}" style="border:0px;"></h:graphicImage>
+					</a4j:commandLink>					
+					<h:commandLink target="_new" actionListener="#{managedBean.printMaestro}"
+						title="Imprimir" disabled="#{managedBean.maestroSelected}">
+						<h:graphicImage url="/images/icons/Impresora_01_25x25.png" 
+							style="border:0px;" rendered="#{managedBean.maestroSelected}"></h:graphicImage>						
+						<h:graphicImage url="/images/icons/Impresora_03_20x20.png" 
+							style="border:0px;" rendered="#{!managedBean.maestroSelected}"></h:graphicImage>
+					</h:commandLink>
+				</h:panelGroup>							
+			</h:panelGrid>
+		</h:panelGrid>
+	</ui:define>
+	<ui:define name="tableMaestro">
+		<custom:numberColumn cabecera="Nro" row="#{item.id}" filtro="#{gestionOrdenCompraMB.filtroMaestro.id }"/>
+		<custom:dateColumn cabecera="Fecha Entrega" row="#{item.fecha}" desde="#{gestionOrdenCompraMB.filtroMaestro.fechaPedidoDesde }" hasta="#{gestionOrdenCompraMB.filtroMaestro.fechaPedidoHasta}"/>
+		<custom:textColumn cabecera="Proveedor" row="#{item.proveedor.razonSocial}" filtro="#{gestionOrdenCompraMB.filtroMaestro.proveedor.razonSocial}"/>				
+		<custom:typeColumn cabecera="Estado" row="#{item.estado.nombre}" filtro="#{gestionOrdenCompraMB.estados}"/>
+	</ui:define>
+	<ui:define name="headerDetalle">
+		<h:outputText value="Detalle"></h:outputText>		
+	</ui:define>
+	<ui:define name="contentDetalle">
+		<rich:dataTable value="#{gestionOrdenCompraMB.detalles.model}" var="item">
+			<rich:column>
+				<f:facet name="header">
+					<h:outputText value="Insumo"></h:outputText>
+				</f:facet>
+				<h:outputText value="#{item.insumo.nombre}"></h:outputText>
+			</rich:column>
+			<rich:column>
+				<f:facet name="header">
+					<h:outputText value="Cantidad"></h:outputText>
+				</f:facet>
+				<h:outputText value="#{item.cantidad}"></h:outputText>
+			</rich:column>
+			<rich:column>
+				<f:facet name="header">
+					<h:outputText value="Unidad"></h:outputText>
+				</f:facet>
+				<h:outputText value="#{item.unidadMedida.nombre}"></h:outputText>
+			</rich:column>
+			<rich:column>
+				<f:facet name="header">
+					<h:outputText value="Precio Unitario"></h:outputText>
+				</f:facet>
+				<h:outputText value="#{item.precioUnitario}"></h:outputText>
+			</rich:column>
+			
+			<rich:column>
+				<f:facet name="header">
+					<h:outputText value="Sub Total"></h:outputText>
+				</f:facet>
+				<h:outputText value="#{item.subTotal}"></h:outputText>
+			</rich:column>			
+			<f:facet name="footer">
+				<h:panelGrid rowClasses="rowButton" width="90%">
+					<h:panelGroup>
+						<h:outputText value="Total: "/>
+						<h:outputText value="$"/>
+						<h:outputText value="#{gestionOrdenCompraMB.maestro.total}" id="total">
+							<f:convertNumber maxFractionDigits="2" />
+						</h:outputText>
+					</h:panelGroup>
+				</h:panelGrid>
+			</f:facet>
+		</rich:dataTable>
+	</ui:define>
+	
+	<ui:define name="panel">
+		<h:panelGroup id="modalPanel">
+			<rich:modalPanel  width="750" resizeable="false" moveable="false" autosized="true"
+				rendered="#{gestionOrdenCompraMB.renderConfirmar}" showWhenRendered="true">
+				<f:facet name="header">
+					<h:outputText value="Confirmar Orden Compra"></h:outputText>
+				</f:facet>
+				<rich:messages globalOnly="true"></rich:messages>
+				<a4j:form>
+					<rich:dataTable value="#{gestionOrdenCompraMB.detalles.model}" var="item">
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Insumo"></h:outputText>
+							</f:facet>
+							<h:outputText value="#{item.insumo.nombre}"></h:outputText>
+						</rich:column>
+						<rich:column id="cantidad">
+							<f:facet name="header">
+								<h:outputText value="Cantidad"></h:outputText>
+							</f:facet>
+							<h:inputText value="#{item.cantidad}" style="width: 50px"
+								disabled="#{item.pendiente || item.cancelado || item.estado == gestionOrdenCompraMB.detalleRecibido}">
+								<a4j:support event="onblur" reRender="subTotal,total"></a4j:support>
+							</h:inputText>
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Unidad"></h:outputText>
+							</f:facet>
+							<h:outputText value="#{item.unidadMedida.nombre}"></h:outputText>
+						</rich:column>
+						<rich:column id="precio">
+							<f:facet name="header">
+								<h:outputText value="Precio Unitario"></h:outputText>
+							</f:facet>
+							<h:outputText value="$ "></h:outputText>
+							<h:inputText value="#{item.precioUnitario}" style="width: 50px"
+								disabled="#{item.pendiente || item.cancelado  || item.estado == gestionOrdenCompraMB.detalleRecibido}">
+								<a4j:support event="onblur" reRender="subTotal,total"></a4j:support>
+							</h:inputText>
+						</rich:column>						
+						<rich:column id="subTotal">
+							<f:facet name="header">
+								<h:outputText value="Sub Total"></h:outputText>
+							</f:facet>
+							<h:outputText value="$ "></h:outputText>
+							<h:outputText value="#{item.subTotal}"></h:outputText>
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Estado"></h:outputText>
+							</f:facet>
+							<h:outputText value="#{item.estado.nombre}"></h:outputText>
+						</rich:column>
+						<rich:column id="pendiente">
+							<f:facet name="header">
+								<h:outputText value="Pendiente"></h:outputText>
+							</f:facet>
+							<h:selectBooleanCheckbox value="#{item.pendiente}" 
+									disabled="#{item.estado == gestionOrdenCompraMB.detalleRecibido }">
+								<a4j:support event="onchange" reRender="cantidad,cancelar,precio"></a4j:support>
+							</h:selectBooleanCheckbox>							
+						</rich:column>
+						<rich:column id="cancelar">
+							<f:facet name="header">
+								<h:outputText value="Cancelado"></h:outputText>
+							</f:facet>
+							<h:selectBooleanCheckbox value="#{item.cancelado }" 
+									disabled="#{item.estado == gestionOrdenCompraMB.detalleRecibido }">
+								<a4j:support event="onchange" reRender="cantidad,pendiente,precio"></a4j:support>
+							</h:selectBooleanCheckbox>							
+						</rich:column>			
+						<f:facet name="footer">
+							<h:panelGrid rowClasses="rowButton" width="90%">
+								<h:panelGroup>
+									<h:outputText value="Total: "/>
+									<h:outputText value="$"/>
+									<h:outputText value="#{gestionOrdenCompraMB.maestro.total}" id="total">
+										<f:convertNumber maxFractionDigits="2" />
+									</h:outputText>
+								</h:panelGroup>
+							</h:panelGrid>
+						</f:facet>
+					</rich:dataTable>
+					<h:panelGrid style="width:100%;text-align:right;">
+						<h:panelGroup>
+							<a4j:commandButton value="#{msgs.aceptar}"
+								reRender="modalPanel,panel"
+								actionListener="#{gestionOrdenCompraMB.registrarIngreso}"></a4j:commandButton>
+							<a4j:commandButton value="#{msgs.cancelar}"
+								ajaxSingle="true" 
+								reRender="modalPanel,entity" 
+								actionListener="#{gestionOrdenCompraMB.hide}"></a4j:commandButton>							
+						</h:panelGroup>
+					</h:panelGrid>
+				</a4j:form>
+			</rich:modalPanel>
+		</h:panelGroup>		
+	</ui:define>
+	
+</ui:composition>
+

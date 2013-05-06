@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:custom="http://code.google.com/p/sandia-project/custom">
+	<a4j:loadStyle src="resource:///css/common.css"></a4j:loadStyle>
+	<!--<h:graphicImage url="/images/cabecera.png"></h:graphicImage>
+	<a4j:status>
+		<f:facet name="start">
+			<h:graphicImage url="/images/bread.gif"></h:graphicImage>
+		</f:facet>
+		<f:facet name="stop">
+			<h:graphicImage url="/images/breadStop.png"></h:graphicImage>
+		</f:facet>
+	</a4j:status>
+	--><h:form>
+		<h:panelGrid columns="1" width="100%" rowClasses="rowButton" style="background-image:url('/CapaPresentacion/images/trama.png')">
+			<h:panelGroup style="font-family: Trebuchet MS,Verdana,sans-serif; font-size: 11px">
+				<h:outputText value="Usuario: "></h:outputText>
+				<h:outputText value="#{mBSesion.user.login}" style="font-weight: bold;"></h:outputText>
+				<h:outputText value=" - "></h:outputText>
+				<h:commandLink actionListener="#{mBSesion.closeSession }" value="Logout" ></h:commandLink>
+<!--				<img src="/CapaPresentacion/images/minilogo.png" alt=""/> -->
+			</h:panelGroup>
+		</h:panelGrid>
+	</h:form>		
+	<h:form>
+		<rich:toolBar>
+			<rich:dropDownMenu value="Clientes" rendered="#{rich:isUserInRole('ADMINISTRADOR,SUPER_USUARIO')}">
+				<rich:menuItem value="Clientes" icon="/images/icons/clientes_Buscar35x35.png" 
+					action="#{gestionarClienteMB.buscarCliente}" rendered="#{rich:isUserInRole('ADMINISTRADOR,SUPER_USUARIO')}"></rich:menuItem>
+				<rich:menuItem value="Nuevo Cliente" icon="/images/icons/clientes_Agregar35x35.png" 
+					action="#{gestionarClienteMB.registrarCliente}" rendered="#{rich:isUserInRole('ADMINISTRADOR,SUPER_USUARIO')}"></rich:menuItem>
+			</rich:dropDownMenu>
+			<rich:dropDownMenu value="Empleados" rendered="#{rich:isUserInRole('ADMINISTRADOR,SUPER_USUARIO')}">
+				<rich:menuItem value="Empleados" icon="/images/icons/empleado_gestionar35x35.png" 
+					action="#{gestionEmpleadoMB.init}" rendered="#{rich:isUserInRole('ADMINISTRADOR,SUPER_USUARIO')}"></rich:menuItem>
+				<rich:menuItem value="Cargos" icon="/images/Cargos_20x20.png"  
+					action="#{gestionCargoMB.init}" rendered="#{rich:isUserInRole('ADMINISTRADOR,SUPER_USUARIO')}"></rich:menuItem>
+			</rich:dropDownMenu>
+			<rich:dropDownMenu value="#{msgs.produccion}" rendered="#{rich:isUserInRole('ADMINISTRADOR,RESPONSABLE_DE_PRODUCCION,SUPER_USUARIO')}">
+				<rich:menuItem value="#{msgs.diagramaciones_produccion}" icon="/images/icons/DiagramacionesProduccion_25x25.png" 
+					action="#{diagramacionProduccionMB.init}" rendered="#{rich:isUserInRole('RESPONSABLE_DE_PRODUCCION,SUPER_USUARIO')}"></rich:menuItem>
+				<rich:menuItem value="#{msgs.diagramar_produccion}" icon="/images/icons/diagramarProduccion35x35.png" 
+					action="#{diagramarProduccionMB.nuevaDiagramacion }" rendered="#{rich:isUserInRole('RESPONSABLE_DE_PRODUCCION,SUPER_USUARIO')}"></rich:menuItem>
+				<rich:menuItem value="Recetas" icon="/images/icons/receta35x35.png" 
+					action="#{gestionRecetaMB.init}" rendered="#{rich:isUserInRole('ADMINISTRADOR,SUPER_USUARIO')}"></rich:menuItem>
+				<rich:menuItem value="Insumos" icon="/images/icons/insumos35x35.png" 
+					action="#{gestionInsumoMB.init}" rendered="#{rich:isUserInRole('ADMINISTRADOR,SUPER_USUARIO')}"></rich:menuItem>
+				<rich:menuItem value="#{msgs.asignacion_productos}" icon="/images/AsignarProductos_20x20.png"  
+					action="#{asignarProductoMB.init}" rendered="#{rich:isUserInRole('RESPONSABLE_DE_PRODUCCION,SUPER_USUARIO')}"></rich:menuItem>
+				<rich:menuItem value="Productos" icon="/images/icons/productos35x35.png" 
+					action="#{gestionProductoMB.init}" rendered="#{rich:isUserInRole('ADMINISTRADOR,SUPER_USUARIO')}"></rich:menuItem>
+			</rich:dropDownMenu>
+			<rich:dropDownMenu value="#{msgs.distribucion}" rendered="#{rich:isUserInRole('ADMINISTRADOR,RESPONSABLE_DE_DISTRIBUCION,SUPER_USUARIO')}">
+				<rich:menuItem value="Diagramaciones de Reparto" icon="/images/icons/DiagramacionesDistribucion_25x25.png" 
+					action="#{diagramacionDistribucionMB.init}" rendered="#{rich:isUserInRole('RESPONSABLE_DE_DISTRIBUCION,SUPER_USUARIO')}"></rich:menuItem>
+				<rich:menuItem value="Diagramar Reparto" icon="/images/icons/diagramarReparto35x35.png" 
+					action="#{diagramarDistribucionMB.nuevaDiagramacion }" rendered="#{rich:isUserInRole('RESPONSABLE_DE_DISTRIBUCION,SUPER_USUARIO')}"></rich:menuItem>
+				<rich:menuItem value="#{msgs.gestionar_vehiculos}" icon="/images/icons/camion25x25.png" 
+					action="#{gestionVehiculoMB.init}" rendered="#{rich:isUserInRole('ADMINISTRADOR,SUPER_USUARIO')}"></rich:menuItem>
+				<rich:menuItem value="#{msgs.asignacion_zonas}" icon="/images/icons/asignarZona35x35.png" 
+					action="#{asignarZonaEmpleadoMB.init}" rendered="#{rich:isUserInRole('RESPONSABLE_DE_DISTRIBUCION,SUPER_USUARIO')}"></rich:menuItem>
+				<rich:menuItem value="Zonas" icon="/images/icons/Zonas_25x25.png"  
+					action="#{gestionZonaMB.init}" rendered="#{rich:isUserInRole('ADMINISTRADOR,SUPER_USUARIO')}"></rich:menuItem>
+				<rich:menuItem value="Provincias - Localidades - Barrios" icon="/images/icons/Pais_25x25.png"   
+					action="#{gestionProvinciaLocalidadBarrioMB.init}" rendered="#{rich:isUserInRole('ADMINISTRADOR,SUPER_USUARIO')}"></rich:menuItem>
+			</rich:dropDownMenu>
+			<rich:dropDownMenu value="Stock" rendered="#{rich:isUserInRole('ADMINISTRADOR,RESPONSABLE_DE_STOCK,SUPER_USUARIO')}">
+				<rich:menuItem value="Ordenes de Compra"  icon="/images/icons/OrdenCompra_25x25.png"
+					action="#{gestionOrdenCompraMB.init}" rendered="#{rich:isUserInRole('RESPONSABLE_DE_STOCK,SUPER_USUARIO')}"></rich:menuItem>
+				<rich:menuItem value="Generar Orden de Compra"  icon="/images/icons/OrdenCompra_Agregar_20x20.png"
+					action="#{generarOrdenCompraMB.init}" rendered="#{rich:isUserInRole('RESPONSABLE_DE_STOCK,SUPER_USUARIO')}"></rich:menuItem>
+				<rich:menuItem value="Estado de Inventario" icon="/images/icons/Inventario_25x25.png" 
+					action="#{gestionStockInsumosMB.init}" rendered="#{rich:isUserInRole('RESPONSABLE_DE_STOCK,SUPER_USUARIO')}"></rich:menuItem>
+				<rich:menuItem value="Proveedores"  icon="/images/Provider_20x20.png" 
+					action="#{gestionProveedorMB.init}" rendered="#{rich:isUserInRole('ADMINISTRADOR,SUPER_USUARIO')}"></rich:menuItem>
+				<rich:menuItem value="Tipo de Novedades de Stock" icon="/images/icons/TipoNovedadStock_25x25.png" 
+					action="#{gestionTipoNovedadMB.init}" rendered="#{rich:isUserInRole('ADMINISTRADOR,SUPER_USUARIO')}"></rich:menuItem>
+				<rich:menuItem value="Novedades de Stock"  icon="/images/icons/NovedadesStock_25x25.png"
+					action="#{gestionNovedadMB.init}" rendered="#{rich:isUserInRole('RESPONSABLE_DE_STOCK,SUPER_USUARIO')}"></rich:menuItem>
+			</rich:dropDownMenu>
+			<rich:dropDownMenu value="#{msgs.gestion}" rendered="#{rich:isUserInRole('ADMINISTRADOR,SUPER_USUARIO')}">
+				<rich:menuItem value="Clientes" icon="/images/icons/clientes_Buscar35x35.png" 
+					action="#{gestionarClienteMB.buscarCliente}" rendered="#{rich:isUserInRole('ADMINISTRADOR,SUPER_USUARIO')}"></rich:menuItem>
+				<rich:menuItem value="Empleados" icon="/images/icons/empleado_gestionar35x35.png" 
+					action="#{gestionEmpleadoMB.init}" rendered="#{rich:isUserInRole('ADMINISTRADOR,SUPER_USUARIO')}"></rich:menuItem>
+				<rich:menuItem value="Cargos"  icon="/images/Cargos_20x20.png"
+					action="#{gestionCargoMB.init}" rendered="#{rich:isUserInRole('ADMINISTRADOR,SUPER_USUARIO')}"></rich:menuItem>
+				<rich:menuItem value="Productos" icon="/images/icons/productos35x35.png" 
+					action="#{gestionProductoMB.init}" rendered="#{rich:isUserInRole('ADMINISTRADOR,SUPER_USUARIO')}"></rich:menuItem>
+				<rich:menuItem value="#{msgs.gestionar_vehiculos}" icon="/images/icons/camion25x25.png" 
+					action="#{gestionVehiculoMB.init}" rendered="#{rich:isUserInRole('ADMINISTRADOR,SUPER_USUARIO')}"></rich:menuItem>
+				<rich:menuItem value="Zonas"  icon="/images/Zonas_20x20.png"  
+					action="#{gestionZonaMB.init}" rendered="#{rich:isUserInRole('ADMINISTRADOR,SUPER_USUARIO')}"></rich:menuItem>
+				<rich:menuItem value="Provincias - Localidades - Barrios" icon="/images/icons/Pais_25x25.png"     
+					action="#{gestionProvinciaLocalidadBarrioMB.init}" rendered="#{rich:isUserInRole('ADMINISTRADOR,SUPER_USUARIO')}"></rich:menuItem>
+				<rich:menuItem value="Proveedores"  icon="/images/Provider_20x20.png"
+					action="#{gestionProveedorMB.init}" rendered="#{rich:isUserInRole('ADMINISTRADOR,SUPER_USUARIO')}"></rich:menuItem>
+			</rich:dropDownMenu>
+			<rich:dropDownMenu value="Monitores" rendered="#{rich:isUserInRole('ADMINISTRADOR,SUPER_USUARIO')}">
+				<rich:menuItem value="Monitor de Pedidos" icon="/images/icons/SemaforoPedidos_25x25.png"
+					action="#{monitorPedidosMB.init}" rendered="#{rich:isUserInRole('ADMINISTRADOR,SUPER_USUARIO')}"></rich:menuItem>
+			</rich:dropDownMenu>
+			
+			<rich:dropDownMenu value="Ayuda">
+						
+							
+				
+				
+				<rich:menuItem value="Acerca de Espiga" 
+					action="acercade" rendered="#{rich:isUserInRole('ADMINISTRADOR,SUPER_USUARIO')}"></rich:menuItem>
+			</rich:dropDownMenu>
+			
+			<rich:toolBarGroup location="right">
+				<h:panelGroup>	
+					<a href="ManualUsuario.pdf" target="_new">Manual</a>							
+					<a4j:commandButton image="/images/icons/Alerta_25x25.png" >
+						<rich:toolTip showEvent="onclick" 
+							direction="bottom-left" 
+							mode="ajax" 
+							styleClass="tooltip" 
+							layout="block"			
+							id="toolId"										
+							hideEvent="ondblclick"
+							style="width: 550px;">
+							<a4j:support event="onshow"
+								reRender="panelMon"
+								actionListener="#{monitorMensajesMB.verificar }"></a4j:support>
+				            <f:facet name="defaultContent">
+				                <strong>Wait...</strong>
+				            </f:facet>
+				            <span style="white-space:nowrap"><strong>Alerta</strong><br/></span>
+				            
+				            	<h:panelGrid id="panelMon">
+				            		<h:panelGroup rendered="#{monitorMensajesMB.stock }">
+				            			<h:outputText value="Existen insumos con Stock por debajo del punto de reposicion"></h:outputText>
+				            			<h:outputText value=" - "></h:outputText>				            		
+				            			<h:commandLink value="Solucionar"
+				            				action="#{gestionStockInsumosMB.init }"/>
+				            		</h:panelGroup>
+				            		<h:panelGroup rendered="#{monitorMensajesMB.pendientesProduccion }">
+				            			<h:outputText value="Existen Pedidos pendientes de Producir para Hoy"></h:outputText>
+				            			<h:outputText value=" - "></h:outputText>				            		
+				            			<h:commandLink value="Solucionar"
+				            				action="#{diagramarProduccionMB.init }"/>
+				            		</h:panelGroup>
+				            		<h:panelGroup rendered="#{monitorMensajesMB.pendientesEntrega }">
+				            			<h:outputText value="Existen Pedidos pendientes de Entregar para hoy"></h:outputText>
+				            			<h:outputText value=" - "></h:outputText>				            		
+				            			<h:commandLink value="Solucionar"
+				            				action="#{diagramarDistribucionMB.nuevaDiagramacion }"/>
+				            		</h:panelGroup>
+				            		<h:panelGroup rendered="#{monitorMensajesMB.mensajes }">
+				            							            			
+				            		</h:panelGroup>
+				            	</h:panelGrid>
+				            	
+				            	<h:panelGrid style="width:100%;text-align:right;">
+									<h:panelGroup>
+										<a4j:commandLink value="#{msgs.cancelar}"
+											ajaxSingle="true"  
+											onclick="#{rich:component('toolId')}.hide(event);"></a4j:commandLink>
+									</h:panelGroup>
+								</h:panelGrid>								
+			            		
+							
+			            </rich:toolTip>
+					</a4j:commandButton>
+				</h:panelGroup>			
+			</rich:toolBarGroup>
+		</rich:toolBar>
+	</h:form>	
+	<rich:panel>
+		<rich:messages globalOnly="true"></rich:messages>
+	</rich:panel>	
+</ui:composition>

@@ -1,0 +1,84 @@
+<ui:component 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"	
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+	<h:panelGroup>
+		<h:panelGrid columns="2" width="100%">
+			<h:inputText value="#{target.nombre}" id="#{id}" rendered="#{!required}" 
+				style="width:100%" ></h:inputText>
+			<h:inputText value="#{target.nombre}" id="#{id}r" required="#{required}" 
+				style="width:100%;background: #ECDCB2" rendered="#{required}"></h:inputText>
+			<a4j:commandButton image="/images/find.png" reRender="buscadorBarrio"
+				actionListener="#{buscadorBarrioMB.show}" ajaxSingle="true"></a4j:commandButton>
+		</h:panelGrid>
+		<rich:message for="#{id}" rendered="#{!required}"></rich:message>
+		<rich:message for="#{id}r" rendered="#{required}"></rich:message>
+	</h:panelGroup>
+	<h:panelGroup id="buscadorBarrio">					
+		<rich:modalPanel
+			width="800"
+			minHeight="400"				
+			moveable="false"
+			resizeable="false"
+			autosized="true"
+			rendered="#{buscadorBarrioMB.render}"
+			showWhenRendered="true">			
+			<h:panelGrid columns="3" width="100%"				
+				columnClasses="marcoColumna,marcoColumna,marcoColumna">
+				<a4j:region>
+					<rich:dataTable value="#{buscadorBarrioMB.provincias.model}" var="item" id="provincias"
+						onRowMouseOver="this.style.backgroundColor='#F3E8C9'"
+						onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+						<a4j:support event="onRowClick" reRender="localidades,barrios"
+							actionListener="#{buscadorBarrioMB.selectProvincia}"></a4j:support>		
+						<rich:column filterBy="#{item.nombre}" filterEvent="onkeyup">
+							<f:facet name="header">
+								<h:outputText value="Provincias"></h:outputText>
+							</f:facet>
+							<h:outputText value="#{item.nombre}"></h:outputText>
+						</rich:column>
+					</rich:dataTable>
+				</a4j:region>
+				<a4j:region>
+					<rich:dataTable value="#{buscadorBarrioMB.localidades.model}" var="item" id="localidades"
+						onRowMouseOver="this.style.backgroundColor='#F3E8C9'"
+						onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+						<a4j:support event="onRowClick" reRender="barrios"
+							actionListener="#{buscadorBarrioMB.selectLocalidad}"></a4j:support>
+						<rich:column filterBy="#{item.nombre}" filterEvent="onkeyup">
+							<f:facet name="header">
+								<h:outputText value="Localidades"></h:outputText>
+							</f:facet>
+							<h:outputText value="#{item.nombre}"></h:outputText>
+						</rich:column>
+					</rich:dataTable>
+				</a4j:region>
+				<a4j:region>
+					<rich:dataTable value="#{buscadorBarrioMB.barrios.model}" var="item" id="barrios"
+						onRowMouseOver="this.style.backgroundColor='#F3E8C9'"
+						onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+						<a4j:support event="onRowClick" 
+							reRender="buscadorBarrio,#{id}r,#{id}"
+							actionListener="#{buscadorBarrioMB.hide }">
+							<f:setPropertyActionListener value="#{item}" target="#{target}" />
+						</a4j:support>
+						<rich:column filterBy="#{item.nombre}" filterEvent="onkeyup">
+							<f:facet name="header">
+								<h:outputText value="Barrios"></h:outputText>
+							</f:facet>
+							<h:outputText value="#{item.nombre}"></h:outputText>
+						</rich:column>
+					</rich:dataTable>
+				</a4j:region>
+			</h:panelGrid>
+			<h:panelGroup style="text-align: left;width: 100%">
+				<a4j:commandButton value="Volver" ajaxSingle="true" 
+					actionListener="#{buscadorBarrioMB.hide}" 
+					reRender="buscadorBarrio,#{id}r,#{id}"></a4j:commandButton>
+			</h:panelGroup>			
+		</rich:modalPanel>
+	</h:panelGroup>	
+</ui:component>	

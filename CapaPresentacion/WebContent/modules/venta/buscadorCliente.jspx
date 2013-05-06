@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition template="/templates/template.jspx"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:custom="http://code.google.com/p/sandia-project/custom">
+
+	<ui:define name="title">
+		<h:outputText value="#{msgs.buscador_ent_venta}"></h:outputText>
+	</ui:define>
+
+	<ui:define name="content">
+		<a4j:form>
+			<rich:dataTable value="#{gestionarClienteMB.clientes.model}" 
+				var="item" onRowMouseOver="this.style.backgroundColor='#F3E8C9'" 
+				onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+				<a4j:support event="onRowClick" action="#{gestionarClienteMB.gestionarCliente}">
+					<f:setPropertyActionListener value="#{item}" target="#{gestionarClienteMB.cliente}" />
+				</a4j:support>
+				<rich:column filterBy="#{item.razonSocial}" filterEvent="onkeyup">
+					<f:facet name="header">
+						<h:outputText value="#{msgs.razon_social}"></h:outputText>
+					</f:facet>
+					<h:outputText value="#{item.razonSocial}"></h:outputText>
+				</rich:column>
+				<rich:column filterBy="#{item.tipoCliente.name}" filterEvent="onkeyup">
+					<f:facet name="header">
+						<h:outputText value="#{msgs.tipo}"></h:outputText>
+					</f:facet>
+					<h:outputText value="#{item.tipoCliente.name}"></h:outputText>
+				</rich:column>
+				<rich:column filterBy="#{item.cuit}" filterEvent="onkeyup">
+					<f:facet name="header">
+						<h:outputText value="Cuit"></h:outputText>
+					</f:facet>
+					<h:outputText value="#{item.cuit}"></h:outputText>
+				</rich:column>
+				<rich:column filterBy="#{item.condicionIVA.descripcion}" filterEvent="onkeyup">
+					<f:facet name="header">
+						<h:outputText value="#{msgs.entidad_venta_condicion_iva}"></h:outputText>
+					</f:facet>
+					<h:outputText value="#{item.condicionIVA.descripcion}"></h:outputText>
+				</rich:column>
+				<rich:column filterBy="#{item.direccion.barrio.localidad.provincia.nombre}" filterEvent="onkeyup">
+					<f:facet name="header">
+						<h:outputText value="#{msgs.entidad_venta_provincia}"></h:outputText>
+					</f:facet>
+					<h:outputText value="#{item.direccion.barrio.localidad.provincia.nombre}"></h:outputText>
+				</rich:column>
+				<rich:column filterBy="#{item.direccion.barrio.localidad.nombre}" filterEvent="onkeyup">
+					<f:facet name="header">
+						<h:outputText value="#{msgs.entidad_venta_localidad}"></h:outputText>
+					</f:facet>
+					<h:outputText value="#{item.direccion.barrio.localidad.nombre}"></h:outputText>
+				</rich:column>
+				<rich:column filterBy="#{item.direccion.barrio.nombre}" filterEvent="onkeyup">
+					<f:facet name="header">
+						<h:outputText value="#{msgs.barrio}"></h:outputText>
+					</f:facet>
+					<h:outputText value="#{item.direccion.barrio.nombre}"></h:outputText>
+				</rich:column>
+			</rich:dataTable>
+		</a4j:form>
+	</ui:define>
+</ui:composition>

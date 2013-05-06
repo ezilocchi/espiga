@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<ui:composition template="/templates/template.jspx"
+				xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:a4j="http://richfaces.org/a4j"
+				xmlns:rich="http://richfaces.org/rich">
+	<ui:define name="title">
+		<h:outputText value="#{msgs.pedido_registrar}"></h:outputText>
+	</ui:define>
+	<ui:define name="content">
+		<a4j:form>
+			
+			<h:panelGrid columns="2" >
+				<h:outputText value="#{msgs.pedido_cliente}"></h:outputText>
+				<h:outputText value="#{gestionarPedidoMB.cliente.razonSocial}"
+					style="font-weight: bold"></h:outputText>
+				<h:outputText value="#{msgs.pedido_fecha_entrega2}"></h:outputText>
+				<h:panelGrid columns="2">
+					<rich:calendar datePattern="dd/MM/yyyy" id="Pedido_fechaEntrega" 
+						value="#{gestionarPedidoMB.pedido.fechaEntrega}" required="true">
+						<a4j:support event="onchanged" ajaxSingle="true"></a4j:support>
+					</rich:calendar>
+					<rich:message for="Pedido_fechaEntrega"></rich:message>
+				</h:panelGrid>
+			</h:panelGrid>
+			
+			<a4j:region >
+				<h:panelGrid columns="2" headerClass="rich-table-subheadercell"
+					styleClass="marcoColumna" style="width:70%" id="panelDetalle">
+					<h:panelGrid columns="2"
+						columnClasses="ABMColumnLabel,ABMColumnInput">
+						<h:outputText value="#{msgs.pedido_tipo}"></h:outputText>
+						<a4j:region>
+							<h:panelGroup>
+								<rich:comboBox value="#{gestionarPedidoMB.tipos.itemSelected}"
+									id="tipos" required="true">
+									<a4j:support event="onselect" reRender="productos"
+										actionListener="#{gestionarPedidoMB.selectTipoProducto }"></a4j:support>
+									<f:selectItems value="#{gestionarPedidoMB.tipos.items}" />
+								</rich:comboBox>
+								<rich:message for="tipos"></rich:message>
+							</h:panelGroup>
+						</a4j:region>
+						<h:outputText value="#{msgs.producto2}"></h:outputText>
+						<a4j:region>
+							<h:panelGroup>
+								<rich:comboBox required="true"
+									value="#{gestionarPedidoMB.productos.itemSelected}"
+									id="productos">
+									<a4j:support event="onselect" reRender="producto,precioLista,precio"
+										actionListener="#{gestionarPedidoMB.selectProducto }"></a4j:support>
+									<f:selectItems value="#{gestionarPedidoMB.productos.items}" />
+								</rich:comboBox>
+								<rich:message for="productos"></rich:message>
+							</h:panelGroup >
+						</a4j:region>
+						<h:outputText value="#{msgs.producto_precio_lista2}"></h:outputText>
+						<h:outputText
+							value="#{gestionarPedidoMB.productos.entitySelected.precioLista}"
+							style="font-weight: bold;" id="precioLista"></h:outputText>
+					</h:panelGrid>
+					<h:panelGrid columns="2"
+						columnClasses="ABMColumnLabel,ABMColumnInput" id="producto">
+						<h:outputText value="#{msgs.producto_cantidad2}"></h:outputText>						
+						<h:panelGroup>
+							<h:inputText id="cantidad" required="true"
+								value="#{gestionarPedidoMB.detalle.cantidad}"></h:inputText>
+							<h:outputText
+								value="#{gestionarPedidoMB.productos.entitySelected.unidadMedida.nombre}"></h:outputText>
+							<rich:message for="cantidad"></rich:message>
+						</h:panelGroup>						
+						
+						<h:outputText value="#{msgs.producto_precio_venta2}"></h:outputText>
+						<h:panelGroup>
+							<h:inputText id="precio" required="true"
+								value="#{gestionarPedidoMB.detalle.precioVentaUnitario}"></h:inputText>
+							<rich:message for="precio"></rich:message>
+						</h:panelGroup>
+					</h:panelGrid>
+				</h:panelGrid>
+
+				<h:panelGrid rowClasses="rowButton" width="70%">
+					<h:panelGroup>
+						<a4j:commandButton value="#{msgs.agregar}"
+							reRender="detalle,panelDetalle"
+							actionListener="#{gestionarPedidoMB.agregarDetalle}"></a4j:commandButton>
+						<a4j:commandButton value="Limpiar" reRender="panelDetalle"
+							actionListener="#{gestionarPedidoMB.limpiarDetalle}"></a4j:commandButton>
+					</h:panelGroup>
+				</h:panelGrid>
+			</a4j:region>
+			<a4j:region>
+				<rich:dataTable value="#{gestionarPedidoMB.detalles.model}"
+					id="detalle" var="item" width="100%"
+					columnsWidth="22%,26%,10%,13%,13%,10%,6%">
+					<rich:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.producto_tipo}"></h:outputText>
+						</f:facet>
+						<h:outputText value="#{item.producto.tipo.nombre}"></h:outputText>
+					</rich:column>
+					<rich:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.producto}"></h:outputText>
+						</f:facet>
+						<h:outputText value="#{item.producto.nombre}"></h:outputText>
+					</rich:column>
+					<rich:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.producto_cantidad}"></h:outputText>
+						</f:facet>
+						<h:inputText value="#{item.cantidad}">
+							<a4j:support event="onblur" reRender="subTotal,total"></a4j:support>
+						</h:inputText>
+					</rich:column>
+					<rich:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.producto_precio_lista}"></h:outputText>
+						</f:facet>
+						<h:panelGroup>
+						<h:outputText value="$"></h:outputText>
+						<h:outputText value="#{item.producto.precioLista}">
+							<f:convertNumber maxFractionDigits="2" />
+						</h:outputText>
+						</h:panelGroup>
+					</rich:column>
+					<rich:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.producto_precio_venta}"></h:outputText>
+						</f:facet>
+						<h:inputText value="#{item.precioVentaUnitario}" style="width:100%">
+							<a4j:support event="onblur" reRender="subTotal,total"
+								ajaxSingle="true"></a4j:support>
+						</h:inputText>
+					</rich:column>
+					<rich:column id="subTotal">
+						<f:facet name="header">
+							<h:outputText value="#{msgs.sub_total}"></h:outputText>
+						</f:facet>
+						<h:panelGroup>
+						<h:outputText value="$"></h:outputText>
+						<h:outputText value="#{item.cantidad*item.precioVentaUnitario}">
+							<f:convertNumber maxFractionDigits="2" />
+						</h:outputText>
+						</h:panelGroup>
+					</rich:column>
+					<rich:column>
+						<a4j:commandButton image="/images/eliminarSmallBtn.png"
+							reRender="detalle"
+							onclick="javascript:if (!confirm('Desea borrar esta linea del Pedido'))return false;"
+							actionListener="#{gestionarPedidoMB.eliminarDetalle}"></a4j:commandButton>
+					</rich:column>
+					<f:facet name="footer">
+						<h:panelGrid rowClasses="rowButton" width="90%">
+							<h:panelGroup>
+								<h:outputText value="TOTAL: $" />
+								<h:outputText value="#{gestionarPedidoMB.pedido.total}"
+									id="total">
+									<f:convertNumber maxFractionDigits="2" />
+								</h:outputText>
+							</h:panelGroup>
+						</h:panelGrid>
+					</f:facet>
+				</rich:dataTable>
+				<h:panelGrid rowClasses="rowButton" width="100%">
+					<h:panelGroup>
+						<a4j:commandButton value="#{msgs.aceptar}"
+							action="#{gestionarPedidoMB.confirmar}"
+							process="fecha" >
+						</a4j:commandButton>
+						<a4j:commandButton value="#{msgs.cancelar}" ajaxSingle="true"
+							action="#{gestionarPedidoMB.cancelar}"></a4j:commandButton>
+						<a4j:commandButton value="#{msgs.limpiar}" reRender="detalle"
+							onclick="javascript:if (!confirm('Desea borrar todos los productos?'))return false;"
+							actionListener="#{gestionarPedidoMB.limpiarTodo}"></a4j:commandButton>
+					</h:panelGroup>
+				</h:panelGrid>
+			</a4j:region>
+		</a4j:form>
+	</ui:define>
+</ui:composition>

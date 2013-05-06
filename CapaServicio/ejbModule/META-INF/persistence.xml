@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+	<persistence-unit name="Dominio">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<jta-data-source>java:/MSSQLDS</jta-data-source>
+		<class>venta.TipoProducto</class>
+		<class>venta.Producto</class>
+		<class>venta.PedidoDetalle</class>
+		<class>venta.Pedido</class>	
+		<class>venta.Cliente</class>
+		<class>venta.Factura</class>
+		<class>stock.TipoNovedadStock</class>
+		<class>stock.Proveedor</class>
+		<class>stock.NovedadStock</class>
+		<class>stock.OrdenCompra</class>
+		<class>stock.OrdenCompraDetalle</class>
+		<class>stock.UnidadMedidaInsumoCompra</class>
+		<class>produccion.ResultadoProductoDetalle</class>
+		<class>produccion.ProduccionProductoDetalle</class>
+		<class>produccion.ProduccionProducto</class>
+		<class>produccion.DiagramacionProduccion</class>
+		<class>produccion.Insumo</class>
+		<class>produccion.Receta</class>
+		<class>produccion.RecetaDetalle</class>
+		<class>distribucion.Vehiculo</class>
+		<class>distribucion.DiagramacionDistribucionDetalle</class>
+		<class>distribucion.DiagramacionDistribucion</class>
+		<class>base.Zona</class>	
+		<class>base.Provincia</class>
+		<class>base.Localidad</class>
+		<class>base.Recurso</class>		
+		<class>base.Cargo</class>
+		<class>base.Barrio</class>
+		<class>base.Empleado</class>
+		<class>security.UserSecurity</class>
+		<class>security.UserGroup</class>
+		<class>security.Rol</class>
+		<properties>						 
+			<property name="hibernate.show_sql" value="true"/>			
+			<property name="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect"/>
+		</properties>
+	</persistence-unit>
+</persistence>

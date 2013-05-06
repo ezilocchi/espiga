@@ -1,0 +1,23 @@
+<ui:component 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+	
+	<h:panelGroup rendered="#{!required}">
+		<rich:comboBox id="#{id}" required="false" 
+			value="#{value.itemSelected}">			
+			<f:selectItems value="#{value.items}"></f:selectItems>						
+		</rich:comboBox>
+		<rich:message for="#{id}"></rich:message>
+	</h:panelGroup>
+	<h:panelGroup rendered="#{required}">
+		<rich:comboBox id="#{id}r" required="true" inputInactiveStyle="background: #ECDCB2"
+			value="#{value.itemSelected}" inputStyle="background: #ECDCB2">			
+			<f:selectItems value="#{value.items}"></f:selectItems>						
+		</rich:comboBox>
+		<rich:message for="#{id}r"></rich:message>
+	</h:panelGroup>
+</ui:component>	

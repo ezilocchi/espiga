@@ -1,0 +1,134 @@
+.test {
+margin-right: 10px;
+background-color: black;
+overflow: scroll;
+background-repeat: inherit;
+}
+
+.rowButton {
+	text-align: right;
+}
+
+.columnaMaestro,
+.columnaDetalle,
+.marcoColumna30,
+.marcoColumna33,
+.marcoColumna50,
+.marcoColumna70,
+.marcoColumna {		
+	vertical-align: top;
+	text-align: center;
+	border-width: 1px 1px 1px 3px;
+	padding: 1px 1px 1px 3px;
+	border-style: solid solid solid solid;
+	border-color: #B6AD84 #B6AD84 #B6AD84
+		#B6AD84;
+	background-color: rgb(222, 222, 180);	
+}
+
+.marcoColumna30{
+	width: 30%
+}
+.columnaMaestro,
+.columnaDetalle,
+.marcoColumna50{
+	width: 50%
+}
+.marcoColumna70{	
+	width: 70%
+}
+
+.marcoColumna33{
+	width: 33%;
+}
+
+.ABMColumnLabel {	
+	text-align: right;
+}
+.ABMColumnInput {
+	width: 70%;
+	text-align: left;
+}
+.ABMColumnOutput {
+	width: 70%;
+	text-align: left;
+	font-weight: bold;
+}
+
+.evenRowTable {
+	background-color: rgb(222, 222, 180);
+}
+.oddRowTable {
+	background-color: rgb(190, 14, 170);
+}
+
+.footerButtons{
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.msgsError{
+	color: red;
+}
+.msgsFatal{
+	color: red;
+}
+.msgsInfo{	
+}
+.msgsWarn{
+	color: yellow;
+}
+
+.resultado{
+	background-color: #ECD7AE;
+}
+
+.dateColumn{	
+	margin: 0px;
+	padding: 0px;
+}
+
+/* Redefinicion de los estilos de RichFaces */
+/*Table*/
+.rich-table-subheadercell {
+	background-color: #C8D1B7;
+	text-align: center;
+	
+}
+.rich-table-headercell{
+	height: 26px;
+	padding: 0px;
+	padding-left: 3%;
+	text-align: left;	
+}
+.rich-table-footercell {
+	background-color: #C8D1B7;
+	text-align: center;
+}
+.rich-table {
+	width: 100%;
+	text-align: center;
+}
+
+/*Messages*/
+.rich-messages {
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+.rich-message-label {
+	color: red;	
+}
+
+/*Tree*/
+.rich-tree-node-text{
+	text-align: left;
+}
+
+/*PickList*/
+.rich-picklist-body{
+	width: 100%;
+}
+.rich-picklist-list-content{
+	width: 100%;
+	height: 100%	
+}

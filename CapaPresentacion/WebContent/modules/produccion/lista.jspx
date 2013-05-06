@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition template="/templates/maestroDetalle.jspx"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:custom="http://code.google.com/p/sandia-project/custom">
+
+	<ui:param name="managedBean" value="#{diagramacionProduccionMB}"></ui:param>
+
+	<ui:define name="title">
+		<h:outputText value="#{msgs.diagramar_produccion}"></h:outputText>
+	</ui:define>
+
+	<ui:define name="headerMaestro">
+		<h:panelGrid columns="2" width="100%">
+			<h:outputText value="Diagramaciones"></h:outputText>
+			<h:panelGrid style="width:100%;text-align:right;">
+				<h:panelGroup>
+					<a4j:commandButton image="/images/icons/LimpiarFiltros_25x25.png" id="btnLimpiarFiltrar" 
+						reRender="maestro" actionListener="#{diagramacionProduccionMB.limpiarFiltroMaestro }" title="Limpiar Filtro"></a4j:commandButton>
+					<a4j:commandButton value="Buscar" image="/images/find.png" id="btnFiltrar" 
+						reRender="panel" actionListener="#{diagramacionProduccionMB.buscarMaestro }" title="Filtrar"></a4j:commandButton>
+					<a4j:commandButton ajaxSingle="true" title="Nuevo"
+						action="#{diagramarProduccionMB.nuevaDiagramacion}"
+						image="/images/sinonimoSmall.png">
+					</a4j:commandButton>
+				</h:panelGroup>
+			</h:panelGrid>
+		</h:panelGrid>
+	</ui:define>
+	<ui:define name="tableMaestro">
+		<custom:numberColumn cabecera="Nro" row="#{item.id}" filtro="#{diagramacionProduccionMB.filtroMaestro.id }"/>
+		<custom:dateColumn cabecera="Entrega" row="#{item.fechaEntrega}" desde="#{diagramacionProduccionMB.filtroMaestro.fechaEntregaDesde }" hasta="#{diagramacionProduccionMB.filtroMaestro.fechaEntregaHasta}"/>				
+		<custom:typeColumn cabecera="Estado" row="#{item.estado.nombre}" filtro="#{diagramacionProduccionMB.estados }"/>				
+	</ui:define>
+	<ui:define name="headerDetalle">
+		<h:panelGrid columns="2" width="100%"
+			columnClasses=",ABMColumnLabel">		
+			<h:outputText value="Detalle"></h:outputText>
+			<h:panelGroup>
+				<h:commandLink target="_new" actionListener="#{diagramacionProduccionMB.printResultado}"
+					disabled="#{!diagramacionProduccionMB.maestroSelected }">
+					<h:graphicImage url="/images/icons/ImpresoraHR_25x25.png" 
+						style="border:0px;" title="Imprimir Hoja de Ruta"
+						rendered="#{diagramacionProduccionMB.maestroSelected }"></h:graphicImage>
+					<h:graphicImage url="/images/ImpresoraHR_25x25.png" 
+						style="border:0px;" title="Imprimir Hoja de Ruta"
+						rendered="#{!diagramacionProduccionMB.maestroSelected }"></h:graphicImage>
+				</h:commandLink>
+				<a4j:commandLink ajaxSingle="true"
+					title="Editar"
+					disabled="#{!diagramacionProduccionMB.finalizable}"
+					action="#{diagramarProduccionMB.modificarDiagramacion}">
+					<f:setPropertyActionListener value="#{diagramacionProduccionMB.maestro}" target="#{diagramarProduccionMB.diagramacion}"/>
+					<f:setPropertyActionListener value="#{appVariables.actionUPDATE}" target="#{diagramarProduccionMB.action}" />
+					<h:graphicImage url="/images/editarSmallBtn.png" rendered="#{diagramacionProduccionMB.finalizable}" style="border:0px;"></h:graphicImage>
+					<h:graphicImage url="/images/editarSmallBtn-dis.png" rendered="#{!diagramacionProduccionMB.finalizable}" style="border:0px;"></h:graphicImage>
+				</a4j:commandLink>
+				<a4j:commandLink action="#{registrarResultadoProduccionMB.init}"										
+					title="Finalizar" 
+					disabled="#{!diagramacionProduccionMB.finalizable}">
+					<f:setPropertyActionListener value="#{diagramacionProduccionMB.maestro}" target="#{registrarResultadoProduccionMB.diagramacion}"/>
+					<h:graphicImage url="/images/aceptarSmallBtn.png" rendered="#{diagramacionProduccionMB.finalizable}" style="border:0px;"></h:graphicImage>
+					<h:graphicImage url="/images/aceptarSmallBtn-dis.png" rendered="#{!diagramacionProduccionMB.finalizable}" style="border:0px;"></h:graphicImage>
+				</a4j:commandLink>
+				<a4j:commandLink actionListener="#{managedBean.cancelar}"
+					ajaxSingle="true" 
+					reRender="panel"
+					title="Cancelar" 
+					disabled="#{!diagramacionProduccionMB.finalizable}"
+					onclick="javascript:if (!confirm('Confirma que desea borrar'))return false;">
+					<h:graphicImage url="/images/cancelarSmallBtn.png" rendered="#{diagramacionProduccionMB.finalizable}" style="border:0px;"></h:graphicImage>
+					<h:graphicImage url="/images/cancelarSmallBtn-dis.png" rendered="#{!diagramacionProduccionMB.finalizable}" style="border:0px;"></h:graphicImage>
+				</a4j:commandLink>
+			</h:panelGroup>
+			
+		</h:panelGrid>
+	</ui:define>
+	<ui:define name="contentDetalle">
+		<rich:tree>
+			<rich:treeNodesAdaptor nodes="#{diagramacionProduccionMB.detalles.entities}"
+				var="detalle">
+				<rich:treeNode icon="/images/icons/producto25x25.png" 
+					iconLeaf="/images/icons/producto25x25.png">					
+					<h:outputText value="#{detalle.producto.nombre}"></h:outputText>
+					<h:outputText value=": "></h:outputText>					
+					<h:outputText value="#{detalle.total} "></h:outputText>
+					<h:outputText value=" #{detalle.producto.unidadMedida.nombre}"></h:outputText>
+					<h:outputText value=" - Resultado: " rendered="#{diagramacionProduccionMB.producida == maestro.estado}"></h:outputText>
+					<h:outputText value=" #{detalle.cantidadProducida}" rendered="#{diagramacionProduccionMB.producida == maestro.estado}"></h:outputText>
+				</rich:treeNode>
+			</rich:treeNodesAdaptor>
+		</rich:tree>
+	</ui:define>
+</ui:composition>

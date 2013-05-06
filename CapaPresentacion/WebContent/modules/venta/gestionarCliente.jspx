@@ -1,0 +1,481 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<ui:composition template="/templates/template.jspx"
+			xmlns="http://www.w3.org/1999/xhtml"
+			xmlns:ui="http://java.sun.com/jsf/facelets"
+			xmlns:h="http://java.sun.com/jsf/html"
+			xmlns:f="http://java.sun.com/jsf/core"
+			xmlns:a4j="http://richfaces.org/a4j"
+			xmlns:rich="http://richfaces.org/rich"
+			xmlns:custom="http://code.google.com/p/sandia-project/custom">
+	<ui:define name="estilo">
+		<style type="text/css">
+			.col {
+				width: 50%;
+			}
+			</style>
+			<script type="text/javascript">
+				function selectRow(obj) {
+					var row = obj.parentNode;
+					var parent = obj.parentNode.parentNode;
+					for ( var x = 0; parent.childNodes.length; x++) {
+						if (row == parent.childNodes[x]) {
+							parent.childNodes[x].style.backgroundColor = '#F3E8C9';
+						} else {
+							parent.childNodes[x].style.backgroundColor = '#FFFFFF';
+						}
+					}
+				}
+			</script>
+	</ui:define>
+	<ui:define name="title">
+		<h:outputText value="#{msgs.gestion_entidad_venta}"></h:outputText>
+	</ui:define>
+	<ui:define name="content">
+		<h:panelGrid columnClasses="marcoColumna" width="70%">
+			<h:panelGrid width="100%" headerClass="rich-table-subheadercell"
+				columns="2" columnClasses="col,col" id="panelCliente">
+				<f:facet name="header">
+					<a4j:form>
+						<h:panelGrid columns="2" width="100%"
+							columnClasses=",ABMColumnLabel">
+							<h:outputText value="#{msgs.entidad_venta}"></h:outputText>						
+							<h:panelGroup>
+								<a4j:commandButton ajaxSingle="true"
+									reRender="modalPanelCliente" title="Editar"
+									image="/images/editarSmallBtn.png"
+									actionListener="#{gestionarClienteMB.renderPanelCliente}">
+								</a4j:commandButton>
+								<a4j:commandButton ajaxSingle="true" title="Borrar"
+									image="/images/eliminarSmallBtn.png"
+									action="#{gestionarClienteMB.deleteCliente}">
+								</a4j:commandButton>
+							</h:panelGroup>							
+						</h:panelGrid>
+					</a4j:form>
+				</f:facet>
+				<h:panelGrid columns="2" width="100%"
+					columnClasses="ABMColumnLabel,ABMColumnOutput">
+					<h:outputText value="#{msgs.entidad_venta_razon_social}"></h:outputText>
+					<h:outputText value="#{gestionarClienteMB.cliente.razonSocial}"></h:outputText>
+					<h:outputText value="#{msgs.entidad_venta_tipo_cliente}"></h:outputText>
+					<h:outputText value="#{gestionarClienteMB.cliente.tipoCliente}"></h:outputText>
+					<h:outputText value="#{msgs.entidad_venta_condicion_iva}: "></h:outputText>
+					<h:outputText value="#{gestionarClienteMB.cliente.condicionIVA}"></h:outputText>
+					<h:outputText value="#{msgs.entidad_venta_cuit}"></h:outputText>
+					<h:outputText value="#{gestionarClienteMB.cliente.cuit}"></h:outputText>
+					<h:outputText value="#{msgs.entidad_venta_telefono}"></h:outputText>
+					<h:outputText value="#{gestionarClienteMB.cliente.telefono}"></h:outputText>
+					<h:outputText value="#{msgs.entidad_venta_fax}"></h:outputText>
+					<h:outputText value="#{gestionarClienteMB.cliente.fax}"></h:outputText>
+					<h:outputText value="#{msgs.entidad_venta_mail}"></h:outputText>
+					<h:outputText value="#{gestionarClienteMB.cliente.mail}"></h:outputText>
+				</h:panelGrid>
+				<h:panelGrid columns="2" width="100%"
+					columnClasses="ABMColumnLabel,ABMColumnOutput">
+					<h:outputText value="#{msgs.entidad_venta_provincia}: "></h:outputText>
+					<h:outputText
+						value="#{gestionarClienteMB.cliente.direccion.barrio.localidad.provincia.nombre}"></h:outputText>
+					<h:outputText value="#{msgs.entidad_venta_localidad}: "></h:outputText>
+					<h:outputText
+						value="#{gestionarClienteMB.cliente.direccion.barrio.localidad.nombre}"></h:outputText>
+					<h:outputText value="#{msgs.entidad_venta_barrio}"></h:outputText>
+					<h:outputText
+						value="#{gestionarClienteMB.cliente.direccion.barrio.nombre}"></h:outputText>
+					<h:outputText value="#{msgs.entidad_venta_calle}"></h:outputText>
+					<h:outputText value="#{gestionarClienteMB.cliente.direccion.calle}"></h:outputText>
+					<h:outputText value="#{msgs.entidad_venta_nro}"></h:outputText>
+					<h:outputText
+						value="#{gestionarClienteMB.cliente.direccion.numero}"></h:outputText>
+					<h:outputText value="#{msgs.entidad_venta_piso2}"></h:outputText>
+					<h:outputText value="#{gestionarClienteMB.cliente.direccion.piso}"></h:outputText>
+					<h:outputText value="#{msgs.entidad_venta_depto2}"></h:outputText>
+					<h:outputText value="#{gestionarClienteMB.cliente.direccion.depto}"></h:outputText>
+				</h:panelGrid>
+			</h:panelGrid>
+		</h:panelGrid>
+
+		<rich:tabPanel switchType="client">
+			<rich:tab label="#{msgs.pedido_pedidos}">
+				<a4j:form>
+					<h:panelGrid style="width:100%;text-align:right;">
+						<h:panelGroup>
+							<a4j:commandButton value="#{msgs.pedido_agregar}"
+								ajaxSingle="true" action="#{gestionarPedidoMB.registrar}">
+								<f:setPropertyActionListener
+									value="#{gestionarClienteMB.cliente}"
+									target="#{gestionarPedidoMB.cliente}" />
+							</a4j:commandButton>
+						</h:panelGroup>
+					</h:panelGrid>
+					<rich:dataTable value="#{gestionarClienteMB.pedidos.model}"
+						var="item" columnsWidth="10%,15%,15%,24%,24%,12%"
+						id="pedidos">
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Nro"></h:outputText>
+							</f:facet>
+							<h:outputText value="#{item.id}"></h:outputText>
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{msgs.pedido_fecha_solicitud}"></h:outputText>
+							</f:facet>
+							<h:outputText value="#{item.fecha}">
+								<f:convertDateTime dateStyle="short" timeZone="Etc/GMT-2" />
+							</h:outputText>
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{msgs.pedido_fecha_entrega}"></h:outputText>
+							</f:facet>
+							<h:outputText value="#{item.fechaEntrega}">
+								<f:convertDateTime dateStyle="short" timeZone="Etc/GMT-2" />
+							</h:outputText>
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{msgs.pedido_estado}"></h:outputText>
+							</f:facet>
+							<h:outputText value="#{item.estado.nombre}"></h:outputText>
+						</rich:column>
+						<custom:currencyColumn cabecera="#{msgs.pedido_monto_total}" row="#{item.total}"/>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{msgs.acciones}"></h:outputText>
+							</f:facet>
+							<a4j:commandButton image="/images/find.png" title="Ver Detalle"
+								reRender="panelPedido"
+								actionListener="#{gestionarClienteMB.showPedido}"></a4j:commandButton>
+							<a4j:commandButton image="/images/cancelarSmallBtn.png"
+								title="Cancelar Pedido"
+								actionListener="#{gestionarClienteMB.cancelarPedido }"
+								onclick="javascript:if (!confirm('Confirma que desea borrar'))return false;"
+								reRender="pedidos"></a4j:commandButton>
+							<a4j:commandButton image="/images/editarSmallBtn.png"
+								title="Modificar"
+								ajaxSingle="true" action="#{gestionarPedidoMB.modificar}">
+								<f:setPropertyActionListener
+									value="#{item}"
+									target="#{gestionarPedidoMB.pedido}" />
+							</a4j:commandButton>
+						</rich:column>
+					</rich:dataTable>
+				</a4j:form>
+			</rich:tab>
+			<rich:tab label="#{msgs.contactos}">
+				<a4j:form id="contactos">
+					<h:panelGrid style="width:100%;text-align:right;"
+						id="headerContactos">
+						<h:panelGroup>
+							<a4j:commandButton ajaxSingle="true" reRender="panelContacto"
+								title="Nuevo" image="/images/sinonimoSmall.png">
+								<a4j:actionparam assignTo="#{gestionarClienteMB.action}"
+									value="#{appVariables.actionNEW}"
+									actionListener="#{gestionarClienteMB.renderPanel}"></a4j:actionparam>
+							</a4j:commandButton>
+							<a4j:commandLink ajaxSingle="true" reRender="panelContacto"
+								title="Editar" disabled="#{!gestionarClienteMB.selected}"
+								actionListener="#{gestionarClienteMB.renderPanel}">
+								<a4j:actionparam assignTo="#{gestionarClienteMB.action}"
+									value="#{appVariables.actionUPDATE}"
+									actionListener="#{gestionarClienteMB.renderPanel}"></a4j:actionparam>
+								<h:graphicImage url="/images/editarSmallBtn.png"
+									rendered="#{gestionarClienteMB.selected}" style="border:0px;"></h:graphicImage>
+								<h:graphicImage url="/images/editarSmallBtn-dis.png"
+									rendered="#{!gestionarClienteMB.selected}" style="border:0px;"></h:graphicImage>
+							</a4j:commandLink>
+							<a4j:commandLink actionListener="#{gestionarClienteMB.delete}"
+								ajaxSingle="true" reRender="contactos" title="Borrar"
+								disabled="#{!gestionarClienteMB.selected}"
+								onclick="javascript:if (!confirm('Borrar el contacto: #{gestionarClienteMB.entity.apellido}, #{gestionarClienteMB.entity.nombres}'))return false;">
+								<h:graphicImage url="/images/eliminarSmallBtn.png"
+									rendered="#{gestionarClienteMB.selected}" style="border:0px;"></h:graphicImage>
+								<h:graphicImage url="/images/eliminarSmallBtn-dis.png"
+									rendered="#{!gestionarClienteMB.selected}" style="border:0px;"></h:graphicImage>
+							</a4j:commandLink>
+						</h:panelGroup>
+					</h:panelGrid>
+
+					<rich:dataTable value="#{gestionarClienteMB.entities.model}"
+						var="item" columnsWidth="33%,33%,16%,18%" id="tableContactos">
+						<a4j:support event="onRowClick" reRender="headerContactos"
+							actionListener="#{gestionarClienteMB.selectEntity}"
+							oncomplete="selectRow(this)" />
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{msgs.contacto_apellido}"></h:outputText>
+							</f:facet>
+							<h:outputText value="#{item.apellido}"></h:outputText>
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{msgs.contacto_nombre}"></h:outputText>
+							</f:facet>
+							<h:outputText value="#{item.nombres}"></h:outputText>
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{msgs.contacto_telefono}"></h:outputText>
+							</f:facet>
+							<h:outputText value="#{item.telefono}"></h:outputText>
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{msgs.contacto_celular}"></h:outputText>
+							</f:facet>
+							<h:outputText value="#{item.celular}"></h:outputText>
+						</rich:column>
+					</rich:dataTable>
+				</a4j:form>
+			</rich:tab>
+		</rich:tabPanel>
+	</ui:define>
+
+	<ui:define name="panel">
+		<h:panelGroup id="modalPanelCliente">
+			<rich:modalPanel width="750" resizeable="false" moveable="false"
+				autosized="true" rendered="#{gestionarClienteMB.renderPanelCliente}"
+				showWhenRendered="true">
+				<f:facet name="header">
+					<h:outputText value="Cliente"></h:outputText>
+				</f:facet>
+				<a4j:form>
+					<h:panelGrid columnClasses="marcoColumna" width="100%">
+						<h:panelGrid columns="2" id="contanidoPanel"
+							columnClasses="ABMColumnLabel,ABMColumnInput" width="100%">
+							<h:outputText value="#{msgs.entidad_venta_razon_social_req}"></h:outputText>
+							<h:panelGroup>
+								<h:inputText value="#{gestionarClienteMB.cliente.razonSocial}"
+									style="width:100%" id="Cliente_razonSocial" required="true"></h:inputText>
+								<rich:message for="Cliente_razonSocial"></rich:message>
+							</h:panelGroup>
+							<h:outputText value="Tipo: (*)"></h:outputText>
+							<h:panelGroup>
+								<rich:comboBox id="Cliente_tipo" required="true"
+									value="#{gestionarClienteMB.tiposCliente.itemSelected}">
+									<f:selectItems value="#{gestionarClienteMB.tiposCliente.items}"></f:selectItems>
+								</rich:comboBox>
+								<rich:message for="tipo"></rich:message>
+							</h:panelGroup>
+							<h:outputText value="Condicion IVA: (*)"></h:outputText>
+							<h:panelGroup>
+								<rich:comboBox id="Cliente_condicionesIva" required="true"
+									value="#{gestionarClienteMB.condicionesIva.itemSelected}">
+									<f:selectItems
+										value="#{gestionarClienteMB.condicionesIva.items}"></f:selectItems>
+								</rich:comboBox>
+								<rich:message for="Cliente_condicionesIva"></rich:message>
+							</h:panelGroup>
+							<h:outputText value="#{msgs.entidad_venta_cuit_req}"></h:outputText>
+							<h:panelGroup>
+								<h:inputText value="#{gestionarClienteMB.cliente.cuit}"
+									style="width:100%" id="Cliente_cuit" required="true"></h:inputText>
+								<rich:message for="Cliente_cuit"></rich:message>
+							</h:panelGroup>
+							<h:outputText value="#{msgs.entidad_venta_mail}"></h:outputText>
+							<h:panelGroup>
+								<h:inputText value="#{gestionarClienteMB.cliente.mail}"
+									style="width:100%" id="Cliente_mail"></h:inputText>
+								<rich:message for="Cliente_mail"></rich:message>
+							</h:panelGroup>
+							<h:outputText value="#{msgs.entidad_venta_telefono}"></h:outputText>
+							<h:panelGroup>
+								<h:inputText value="#{gestionarClienteMB.cliente.telefono}"
+									style="width:100%" id="Cliente_telefono"></h:inputText>
+								<rich:message for="Cliente_telefono"></rich:message>
+							</h:panelGroup>
+							<h:outputText value="#{msgs.entidad_venta_fax}"></h:outputText>
+							<h:panelGroup>
+								<h:inputText value="#{gestionarClienteMB.cliente.fax}"
+									style="width:100%" id="Cliente_fax"></h:inputText>
+								<rich:message for="Cliente_fax"></rich:message>
+							</h:panelGroup>
+							<h:outputText value="#{msgs.entidad_venta_barrio_req}"></h:outputText>
+							<custom:buscadorBarrio target="#{gestionarClienteMB.cliente.direccion.barrio}" 
+								required="true" id="barrio"/>
+							<h:outputText value="#{msgs.entidad_venta_calle_req}"></h:outputText>
+							<h:panelGroup>
+								<h:inputText
+									value="#{gestionarClienteMB.cliente.direccion.calle}"
+									style="width:100%" id="Cliente_calle" required="true"></h:inputText>
+								<rich:message for="Cliente_calle"></rich:message>
+							</h:panelGroup>
+							<h:outputText value="#{msgs.entidad_venta_nro_req}"></h:outputText>
+							<h:panelGroup>
+								<h:inputText
+									value="#{gestionarClienteMB.cliente.direccion.numero}"
+									style="width:100%" id="numero" required="true"></h:inputText>
+								<rich:message for="numero"></rich:message>
+							</h:panelGroup>
+							<h:outputText value="#{msgs.entidad_venta_piso}"></h:outputText>
+							<h:panelGroup>
+								<h:inputText
+									value="#{gestionarClienteMB.cliente.direccion.piso}"
+									style="width:100%" id="piso"></h:inputText>
+								<rich:message for="piso"></rich:message>
+							</h:panelGroup>
+							<h:outputText value="#{msgs.entidad_venta_depto}"></h:outputText>
+							<h:panelGroup>
+								<h:inputText
+									value="#{gestionarClienteMB.cliente.direccion.depto}"
+									style="width:100%" id="depto"></h:inputText>
+								<rich:message for="depto"></rich:message>
+							</h:panelGroup>
+						</h:panelGrid>
+					</h:panelGrid>
+					<h:panelGrid style="width:100%;text-align:right;">
+						<h:panelGrid columns="3" style="margin-left:300px">
+							<a4j:commandButton value="#{msgs.aceptar}"
+								reRender="modalPanelCliente,panelCliente"
+								actionListener="#{gestionarClienteMB.aceptar}"></a4j:commandButton>
+							<a4j:commandButton value="#{msgs.cancelar}" ajaxSingle="true"
+								reRender="modalPanelCliente"
+								actionListener="#{gestionarClienteMB.cancelar}"></a4j:commandButton>
+						</h:panelGrid>
+					</h:panelGrid>
+				</a4j:form>
+			</rich:modalPanel>
+		</h:panelGroup>
+		<h:panelGroup id="panelContacto">
+			<rich:modalPanel width="550" resizeable="false" moveable="false"
+				autosized="true" rendered="#{gestionarClienteMB.renderPanel}"
+				showWhenRendered="true">
+				<f:facet name="header">
+					<h:outputText value="Contacto"></h:outputText>
+				</f:facet>
+				<a4j:form>
+					<h:panelGrid columnClasses="marcoColumna" width="100%">
+						<h:panelGrid columns="2" id="contanidoPanel"
+							columnClasses="ABMColumnLabel,ABMColumnInput" width="100%">
+							<h:outputText value="#{msgs.contacto_apellido_req}"></h:outputText>
+							<h:panelGroup>
+								<h:inputText value="#{gestionarClienteMB.entity.apellido}"
+									style="width:100%" id="apellido" required="true"></h:inputText>
+								<rich:message for="apellido"></rich:message>
+							</h:panelGroup>
+							<h:outputText value="#{msgs.contacto_nombre_req}"></h:outputText>
+							<h:panelGroup>
+								<h:inputText value="#{gestionarClienteMB.entity.nombres}"
+									style="width:100%" id="nombre" required="true"></h:inputText>
+								<rich:message for="nombre"></rich:message>
+							</h:panelGroup>
+							<h:outputText value="#{msgs.contacto_telefono}"></h:outputText>
+							<h:panelGroup>
+								<h:inputText value="#{gestionarClienteMB.entity.telefono}"
+									style="width:100%" id="telefonoFijo"></h:inputText>
+								<rich:message for="telefonoFijo"></rich:message>
+							</h:panelGroup>
+							<h:outputText value="#{msgs.contacto_celular2}"></h:outputText>
+							<h:panelGroup>
+								<h:inputText value="#{gestionarClienteMB.entity.celular}"
+									style="width:100%" id="celular"></h:inputText>
+								<rich:message for="celular"></rich:message>
+							</h:panelGroup>
+							<h:outputText value="#{msgs.contacto_mail}"></h:outputText>
+							<h:panelGroup>
+								<h:inputText value="#{gestionarClienteMB.entity.mail}"
+									style="width:100%" id="Recurso_mail"></h:inputText>
+								<rich:message for="Recurso_mail"></rich:message>
+							</h:panelGroup>
+						</h:panelGrid>
+					</h:panelGrid>
+					<h:panelGrid style="width:100%;text-align:right;">
+						<h:panelGrid columns="3" style="margin-left:300px">
+							<a4j:commandButton value="#{msgs.aceptar}"
+								reRender="panelContacto,contactos"
+								actionListener="#{gestionarClienteMB.accept}"></a4j:commandButton>
+							<a4j:commandButton value="#{msgs.cancelar}" ajaxSingle="true"
+								reRender="panelContacto,contactos"
+								actionListener="#{gestionarClienteMB.cancel}"></a4j:commandButton>
+							<a4j:commandButton value="#{msgs.limpiar}" ajaxSingle="true"
+								type="reset"></a4j:commandButton>
+						</h:panelGrid>
+					</h:panelGrid>
+				</a4j:form>
+			</rich:modalPanel>
+		</h:panelGroup>
+
+		<h:panelGroup id="panelPedido">
+			<rich:modalPanel width="750" resizeable="false" moveable="false"
+				autosized="true" rendered="#{gestionarClienteMB.showPanel}"
+				showWhenRendered="true">
+				<f:facet name="header">
+					<h:outputText value="Pedido"></h:outputText>
+				</f:facet>
+				<a4j:form>
+					<h:panelGrid columnClasses="marcoColumna" width="100%">
+						<h:panelGrid columns="2" width="100%"
+							headerClass="rich-table-subheadercell">
+							<f:facet name="header">
+								<h:outputText value="Pedido"></h:outputText>
+							</f:facet>
+							<h:panelGrid columns="2" width="100%"
+								columnClasses="ABMColumnLabel,ABMColumnOutput">
+								<h:outputText value="Nro: "></h:outputText>
+								<h:outputText value="#{gestionarClienteMB.pedido.id}"></h:outputText>
+								<h:outputText value="#{msgs.entidad_venta2}"></h:outputText>
+								<h:outputText
+									value="#{gestionarClienteMB.pedido.cliente.razonSocial}"></h:outputText>
+							</h:panelGrid>
+							<h:panelGrid columns="2" width="100%"
+								columnClasses="ABMColumnLabel,ABMColumnOutput">
+								<h:outputText value="#{msgs.pedido_fecha_solicitud2 }"></h:outputText>
+								<h:outputText value="#{gestionarClienteMB.pedido.fecha}">
+									<f:convertDateTime dateStyle="short" timeZone="Etc/GMT-2" />
+								</h:outputText>
+								<h:outputText value="#{msgs.pedido_fecha_entrega2 }"></h:outputText>
+								<h:outputText value="#{gestionarClienteMB.pedido.fechaEntrega}">
+									<f:convertDateTime dateStyle="short" timeZone="Etc/GMT-2" />
+								</h:outputText>
+							</h:panelGrid>
+						</h:panelGrid>
+						<rich:dataTable value="#{gestionarClienteMB.detalle.model}"
+							id="detalle" var="item" width="100%"
+							columnsWidth="25%,25%,12%,12%,14%,12%">
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{msgs.producto_tipo}"></h:outputText>
+								</f:facet>
+								<h:outputText value="#{item.producto.tipo.nombre}"></h:outputText>
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{msgs.producto}"></h:outputText>
+								</f:facet>
+								<h:outputText value="#{item.producto.nombre}"></h:outputText>
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{msgs.producto_cantidad}"></h:outputText>
+								</f:facet>
+								<h:outputText value="#{item.cantidad}"></h:outputText>
+							</rich:column>
+							<custom:currencyColumn cabecera="#{msgs.producto_precio_lista}" row="#{item.producto.precioLista}"/>
+							<custom:currencyColumn cabecera="#{msgs.producto_precio_venta}" row="#{item.precioVentaUnitario}"/>
+							<custom:currencyColumn cabecera="#{msgs.sub_total}" row="#{item.cantidad*item.precioVentaUnitario}"/>
+							<f:facet name="footer">
+								<h:panelGrid rowClasses="rowButton" width="90%">
+									<h:panelGroup>
+										<h:outputText value="Total: "/>
+										<h:outputText value="$"/>
+										<h:outputText value="#{gestionarClienteMB.pedido.total}" id="total">
+											<f:convertNumber maxFractionDigits="2" />
+										</h:outputText>
+									</h:panelGroup>
+								</h:panelGrid>
+							</f:facet>
+						</rich:dataTable>
+					</h:panelGrid>
+					<h:panelGrid style="width:100%;text-align:right;">
+						<a4j:commandButton value="#{msgs.aceptar}" reRender="panelPedido"
+							actionListener="#{gestionarClienteMB.hidePedido}"></a4j:commandButton>
+					</h:panelGrid>
+				</a4j:form>
+			</rich:modalPanel>
+		</h:panelGroup>
+		
+	</ui:define>
+</ui:composition>

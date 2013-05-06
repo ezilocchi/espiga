@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition template="/templates/template.jspx"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:custom="http://code.google.com/p/sandia-project/custom">
+
+	<ui:define name="title">
+		<h:outputText value="Facturar Pedido"></h:outputText>
+	</ui:define>
+
+	<ui:define name="content">
+		<h:panelGrid columns="2" width="70%"
+			styleClass="marcoColumna" style="padding-bottom: 5px">
+			<h:panelGrid columns="2" width="100%"
+				columnClasses="ABMColumnLabel,ABMColumnOutput">
+				<h:outputText value="#{msgs.entidad_venta_razon_social}"></h:outputText>
+				<h:outputText value="#{gestionarClienteMB.cliente.razonSocial}"></h:outputText>
+				<h:outputText value="#{msgs.entidad_venta_tipo_cliente}"></h:outputText>
+				<h:outputText value="#{gestionarClienteMB.cliente.tipoCliente}"></h:outputText>
+				<h:outputText value="#{msgs.entidad_venta_condicion_iva}: "></h:outputText>
+				<h:outputText value="#{gestionarClienteMB.cliente.condicionIVA}"></h:outputText>
+				<h:outputText value="#{msgs.entidad_venta_cuit}"></h:outputText>
+				<h:outputText value="#{gestionarClienteMB.cliente.cuit}"></h:outputText>
+			</h:panelGrid>
+			<h:panelGrid columns="2" width="100%"
+				columnClasses="ABMColumnLabel,ABMColumnOutput">
+				<h:outputText value="#{msgs.entidad_venta_telefono}"></h:outputText>
+				<h:outputText value="#{gestionarClienteMB.cliente.telefono}"></h:outputText>
+				<h:outputText value="#{msgs.entidad_venta_fax}"></h:outputText>
+				<h:outputText value="#{gestionarClienteMB.cliente.fax}"></h:outputText>
+				<h:outputText value="#{msgs.entidad_venta_mail}"></h:outputText>
+				<h:outputText value="#{gestionarClienteMB.cliente.mail}"></h:outputText>
+			</h:panelGrid>
+		</h:panelGrid>
+		<a4j:form>
+			<rich:dataTable id="detalle" var="item" width="100%" 
+				value="#{gestionarClienteMB.pedidosFacturar.model }" 
+				headerClass="rich-table-subheadercell"
+				columnsWidth="16%,20%,20%,20%,12%,12%">
+				<f:facet name="header">
+					<h:outputText value="Pedidos a Facturar"></h:outputText>
+				</f:facet>
+				<custom:textColumn cabecera="Nro" row="#{item.entity.id}" filtro="#{gestionarClienteMB.filtroPedido.i }"></custom:textColumn>
+				<custom:textColumn cabecera="#{msgs.pedido_fecha}" row="#{item.entity.fecha}" filtro="#{gestionarClienteMB.filtroPedido.fecha }"></custom:textColumn>
+				<custom:textColumn cabecera="#{msgs.pedido_fecha_entrega}" row="#{item.entity.fechaEntrega}" filtro="#{gestionarClienteMB.filtroPedido.fechaEntrega }"></custom:textColumn>
+				<custom:currencyColumn cabecera="Sub Total" row="#{item.entity.total}" filtro="#{gestionarClienteMB.filtroPedido.total}"></custom:currencyColumn>
+				<rich:column>	
+					<h:selectBooleanCheckbox value="#{item.selected}">
+						<a4j:support event="onchange" reRender="total" 
+							actionListener="#{gestionarClienteMB.selectPedido}"></a4j:support>
+					</h:selectBooleanCheckbox>					
+				</rich:column>
+				<rich:column>					
+					<a4j:commandButton image="/images/find.png" title="Ver"
+						reRender="panelPedido"
+						actionListener="#{gestionarClienteMB.showPedidoFacturar}"></a4j:commandButton>					
+				</rich:column>
+				<f:facet name="footer">
+					<h:panelGrid rowClasses="rowButton" width="90%">
+						<h:panelGroup>
+							<h:outputText value="Total: "/>
+							<h:outputText value="$"/>
+							<h:outputText value="#{gestionarClienteMB.factura.total}" id="total">
+								<f:convertNumber maxFractionDigits="2" />
+							</h:outputText>
+						</h:panelGroup>
+					</h:panelGrid>
+				</f:facet>						
+			</rich:dataTable>
+			<h:panelGrid style="width:100%;text-align:right;">
+				<h:panelGroup>
+					<a4j:commandButton value="#{msgs.aceptar}"
+						action="#{gestionarClienteMB.aceptarFacturacion}"></a4j:commandButton>
+					<a4j:commandButton value="#{msgs.cancelar}" ajaxSingle="true"
+						action="#{gestionarClienteMB.cancelarFacturacion}"></a4j:commandButton>							
+				</h:panelGroup>
+			</h:panelGrid>
+		</a4j:form>
+	</ui:define>
+	
+	<ui:define name="panel">
+		<h:panelGroup id="panelPedido">
+			<rich:modalPanel width="750" resizeable="false" moveable="false"
+				autosized="true" rendered="#{gestionarClienteMB.showPanel}"
+				showWhenRendered="true">
+				<f:facet name="header">
+					<h:outputText value="Pedido"></h:outputText>
+				</f:facet>
+				<a4j:form>
+					<h:panelGrid columnClasses="marcoColumna" width="100%">
+						<h:panelGrid columns="2" width="100%"
+							headerClass="rich-table-subheadercell">
+							<f:facet name="header">
+								<h:outputText value="Pedido"></h:outputText>
+							</f:facet>
+							<h:panelGrid columns="2" width="100%"
+								columnClasses="ABMColumnLabel,ABMColumnOutput">
+								<h:outputText value="Nro: "></h:outputText>
+								<h:outputText value="#{gestionarClienteMB.pedido.id}"></h:outputText>
+								<h:outputText value="#{msgs.entidad_venta}"></h:outputText>
+								<h:outputText
+									value="#{gestionarClienteMB.pedido.cliente.razonSocial}"></h:outputText>
+							</h:panelGrid>
+							<h:panelGrid columns="2" width="100%"
+								columnClasses="ABMColumnLabel,ABMColumnOutput">
+								<h:outputText value="Fecha: "></h:outputText>
+								<h:outputText value="#{gestionarClienteMB.pedido.fecha}">
+									<f:convertDateTime dateStyle="short" timeZone="Etc/GMT-2" />
+								</h:outputText>
+								<h:outputText value="Fecha Entrega: "></h:outputText>
+								<h:outputText value="#{gestionarClienteMB.pedido.fechaEntrega}">
+									<f:convertDateTime dateStyle="short" timeZone="Etc/GMT-2" />
+								</h:outputText>
+							</h:panelGrid>
+						</h:panelGrid>
+						<rich:dataTable value="#{gestionarClienteMB.detalle.model}"
+							id="detalle" var="item" width="100%"
+							columnsWidth="25%,25%,12%,12%,14%,12%">
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{msgs.producto_tipo}"></h:outputText>
+								</f:facet>
+								<h:outputText value="#{item.producto.tipo.nombre}"></h:outputText>
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{msgs.producto}"></h:outputText>
+								</f:facet>
+								<h:outputText value="#{item.producto.nombre}"></h:outputText>
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{msgs.producto_cantidad}"></h:outputText>
+								</f:facet>
+								<h:outputText value="#{item.cantidad}"></h:outputText>
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{msgs.producto_precio_lista}"></h:outputText>
+								</f:facet>
+								<h:panelGroup>
+								<h:outputText value="$"></h:outputText>
+								<h:outputText value="#{item.producto.precioLista}">
+								<f:convertNumber maxFractionDigits="2"/></h:outputText>
+								</h:panelGroup>
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{msgs.producto_precio_venta}"></h:outputText>
+								</f:facet>
+								<h:panelGroup>
+								<h:outputText value="$"></h:outputText>
+								<h:outputText value="#{item.precioVentaUnitario}"
+									style="width:100%">
+								<f:convertNumber maxFractionDigits="2"/></h:outputText>
+								</h:panelGroup>
+							</rich:column>
+							<rich:column id="subTotal">
+								<f:facet name="header">
+									<h:outputText value="#{msgs.sub_total}"></h:outputText>
+								</f:facet>
+								<h:panelGroup>
+								<h:outputText value="$"></h:outputText>
+								<h:outputText value="#{item.cantidad*item.precioVentaUnitario}">
+									<f:convertNumber maxFractionDigits="2" />
+								</h:outputText>
+								</h:panelGroup>
+							</rich:column>
+							<f:facet name="footer">
+								<h:panelGrid rowClasses="rowButton" width="90%">
+									<h:panelGroup>
+										<h:outputText value="Total: "/>
+										<h:outputText value="$"/>
+										<h:outputText value="#{gestionarClienteMB.pedido.total}" id="total">
+											<f:convertNumber maxFractionDigits="2" />
+										</h:outputText>
+									</h:panelGroup>
+								</h:panelGrid>
+							</f:facet>
+						</rich:dataTable>
+					</h:panelGrid>
+					<h:panelGrid style="width:100%;text-align:right;">
+						<a4j:commandButton value="#{msgs.aceptar}" reRender="panelPedido"
+							actionListener="#{gestionarClienteMB.hidePedido}"></a4j:commandButton>
+					</h:panelGrid>
+				</a4j:form>
+			</rich:modalPanel>
+		</h:panelGroup>
+	</ui:define>
+</ui:composition>

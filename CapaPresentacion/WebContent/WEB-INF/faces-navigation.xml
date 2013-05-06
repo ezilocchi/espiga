@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd"
+	version="1.2">
+	<navigation-rule>		
+		<from-view-id>/*</from-view-id>
+		
+		<!-- LOGIN -->
+		<navigation-case>				
+			<from-outcome>loginOk</from-outcome>
+			<to-view-id>/modules/inicio.jspx</to-view-id>
+		</navigation-case>
+		
+		<!-- AYUDA -->
+		<navigation-case>				
+			<from-outcome>acercade</from-outcome>
+			<to-view-id>/modules/help.jspx</to-view-id>
+		</navigation-case>
+		
+		<!-- BASE -->		
+		<navigation-case>
+			<from-outcome>gestionarEmpleado</from-outcome>
+			<to-view-id>/modules/base/gestionEmpleado.jspx</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>gestionarCargo</from-outcome>
+			<to-view-id>/modules/base/gestionCargo.jspx</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>gestionarZona</from-outcome>
+			<to-view-id>/modules/base/gestionZona.jspx</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>gestionarProvinciaLocalidadBarrio</from-outcome>
+			<to-view-id>/modules/base/gestionProvinciaLocalidadBarrio.jspx</to-view-id>
+		</navigation-case>
+		
+		<!-- VENTA -->
+		<navigation-case>
+			<from-outcome>buscarCliente</from-outcome>
+			<to-view-id>/modules/venta/buscadorCliente.jspx</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>registrarCliente</from-outcome>
+			<to-view-id>/modules/venta/registrarCliente.jspx</to-view-id>
+		</navigation-case>		
+		<navigation-case>
+			<from-outcome>gestionarProductos</from-outcome>
+			<to-view-id>/modules/venta/gestionProductos.jspx</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>gestionarCliente</from-outcome>
+			<to-view-id>/modules/venta/gestionarCliente.jspx</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>registrarPedido</from-outcome>
+			<to-view-id>/modules/venta/registrarPedido.jspx</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>registrarLotePedido</from-outcome>
+			<to-view-id>/modules/venta/registrarLotePedido.jspx</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>facturarPedido</from-outcome>
+			<to-view-id>/modules/venta/facturarPedido.jspx</to-view-id>
+		</navigation-case>
+		
+		<!-- DISTRIBUCION -->
+		<navigation-case>
+			<from-outcome>gestionarVehiculo</from-outcome>
+			<to-view-id>/modules/distribucion/gestionVehiculo.jspx</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>listarDiagramacionDistribucion</from-outcome>
+			<to-view-id>/modules/distribucion/lista.jspx</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>diagramarDistribucion</from-outcome>
+			<to-view-id>/modules/distribucion/diagramarDistribucion.jspx</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>asignarZonaEmpleado</from-outcome>
+			<to-view-id>/modules/distribucion/asignarZonaEmpleado.jspx</to-view-id>
+		</navigation-case>	
+		<navigation-case>
+			<from-outcome>modificarDiagramacionDistribucion</from-outcome>
+			<to-view-id>/modules/distribucion/modificarDiagramacionDistribucion.jspx</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>registrarResultadoDistribucion</from-outcome>
+			<to-view-id>/modules/distribucion/registrarResultadoDistribucion.jspx</to-view-id>
+		</navigation-case>
+		
+		<!-- PRODUCCION -->
+		<navigation-case>
+			<from-outcome>gestionarInsumos</from-outcome>
+			<to-view-id>/modules/produccion/gestionInsumos.jspx</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>listarDiagramacionProduccion</from-outcome>
+			<to-view-id>/modules/produccion/lista.jsp</to-view-id>
+		</navigation-case>			
+		<navigation-case>
+			<from-outcome>diagramarProduccion</from-outcome>
+			<to-view-id>/modules/produccion/diagramarProduccion.jspx</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>gestionarRecetas</from-outcome>
+			<to-view-id>/modules/produccion/gestionReceta.jspx</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>modificarDiagramacionProduccion</from-outcome>
+			<to-view-id>/modules/produccion/modificarDiagramacionProduccion.jspx</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>registrarResultadoProduccion</from-outcome>
+			<to-view-id>/modules/produccion/registrarResultadoProduccion.jspx</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>asignarProductoEmpleado</from-outcome>
+			<to-view-id>/modules/produccion/asignarProductoEmpleado.jspx</to-view-id>
+		</navigation-case>
+		
+		<!-- STOCK -->
+		<navigation-case>
+			<from-outcome>gestinarProveedor</from-outcome>
+			<to-view-id>/modules/stock/gestionProveedor.jspx</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>gestionarStockIsumos</from-outcome>
+			<to-view-id>/modules/stock/gestionStockInsumo.jspx</to-view-id>
+		</navigation-case>		
+		<navigation-case>
+			<from-outcome>gestionarNovedades</from-outcome>
+			<to-view-id>/modules/stock/gestionNovedad.jspx</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>gestionarTipoNovedad</from-outcome>
+			<to-view-id>/modules/stock/gestionTipoNovedad.jspx</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>gestionarOrdenCompra</from-outcome>
+			<to-view-id>/modules/stock/gestionOrdenCompra.jspx</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>generarOrdenCompra</from-outcome>
+			<to-view-id>/modules/stock/generarOrdenCompra.jspx</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>gestionarUnidadMedida</from-outcome>
+			<to-view-id>/modules/stock/gestionUnidadMedida.jspx</to-view-id>
+		</navigation-case>		
+
+		<!-- MONITOREO -->		
+		<navigation-case>
+			<from-outcome>monitorearPedidos</from-outcome>
+			<to-view-id>/modules/monitoreo/monitorPedidos.jspx</to-view-id>
+		</navigation-case>		
+	</navigation-rule>
+			
+</faces-config>

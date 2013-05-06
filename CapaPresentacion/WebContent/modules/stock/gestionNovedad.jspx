@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition template="/templates/ABM.jspx"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:custom="http://code.google.com/p/sandia-project/custom">
+	
+	<ui:define name="estilo">
+		<style type="text/css">
+			.columnaMaestro{
+				width: 70%
+			}
+			.columnaDetalle{
+				width: 30%
+			}
+		</style>
+	</ui:define>
+
+	<ui:param name="managedBean" value="#{gestionNovedadMB}"></ui:param>
+	<ui:param name="entitiesTitle" value="Novedades"></ui:param>
+	<ui:param name="entityTitle" value="Novedad"></ui:param>
+
+	<ui:define name="title">#{msgs.gestion} Novedades</ui:define>
+
+	<ui:define name="dataTableContent">
+		<custom:dateColumn row="#{item.fecha}" cabecera="Fecha"></custom:dateColumn>
+		<custom:typeColumn row="#{item.tipo.nombre}" cabecera="Tipo" filtro="#{gestionNovedadMB.tipos}"></custom:typeColumn>
+		<custom:typeColumn row="#{item.insumo.nombre}" cabecera="Insumo" filtro="#{gestionNovedadMB.insumos}"></custom:typeColumn>		
+		<custom:textColumn row="#{item.descripcion}" cabecera="#{msgs.descripcion}" filtro="#{managedBean.filtro.descripcion}"></custom:textColumn>
+		
+		<rich:column>
+			<f:facet name="header">
+				<h:outputText value="Cantidad"></h:outputText>
+			</f:facet>
+			<h:outputText value="#{item.cantidad} "></h:outputText>
+			<h:outputText value="#{item.unidadMedida.nombre}"></h:outputText>
+		</rich:column>
+	</ui:define>
+
+	<ui:define name="entity">
+		<h:outputText value="Fecha: "></h:outputText>
+		<h:outputText value="#{managedBean.entity.fecha}"></h:outputText>
+		<h:outputText value="Tipo: "></h:outputText>
+		<h:outputText value="#{managedBean.entity.tipo.nombre}"></h:outputText>
+		<h:outputText value="Insumo: "></h:outputText>
+		<h:outputText value="#{managedBean.entity.insumo.nombre}" />
+		<h:outputText value="#{msgs.descripcion}: "></h:outputText>
+		<h:outputText value="#{managedBean.entity.descripcion}" />
+		<h:outputText value="Cantidad: "></h:outputText>
+		<h:outputText value="#{managedBean.entity.cantidad} #{managedBean.entity.unidadMedida.nombre}"></h:outputText>		
+	</ui:define>
+
+	<ui:define name="panelContent">
+		<h:outputText value="Tipo "></h:outputText>
+		<custom:combo id="NovedadStock_tipo" required="true" value="#{managedBean.tipos}"></custom:combo>
+		
+		<h:outputText value="Insumo "></h:outputText>
+		<rich:comboBox id="NovedadStock_insumo" 
+			value="#{managedBean.insumos.itemSelected}"
+			required="true" 
+			inputInactiveStyle="background: #ECDCB2"
+			inputStyle="background: #ECDCB2">
+			<a4j:support event="onselect" 
+				reRender="NovedadStock_unidadMedidar"
+				ajaxSingle="true"
+				actionListener="#{managedBean.selectInsumo }"></a4j:support>
+			<f:selectItems value="#{managedBean.insumos.items}"></f:selectItems>
+		</rich:comboBox>
+		<h:outputText value="Unidad Medida "></h:outputText>
+		<custom:combo id="NovedadStock_unidadMedida" required="true" value="#{managedBean.unidades}"></custom:combo>
+		<h:outputText value="#{msgs.descripcion}"></h:outputText>
+		<custom:inputText value="#{managedBean.entity.descripcion}" id="NovedadStock_descripcion" required="true"></custom:inputText>		
+		<h:outputText value="Cantidad "></h:outputText>
+		<custom:inputText value="#{managedBean.entity.cantidad}" id="NovedadStock_cantidad" required="true"></custom:inputText>			
+	</ui:define>	
+</ui:composition>
+

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<faces-config xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd"
+	version="1.2">
+
+	<application>
+		<message-bundle>presentacion.customMessages</message-bundle>
+		<resource-bundle>			
+			<base-name>presentacion.messages</base-name>			
+			<var>msgs</var>
+		</resource-bundle>
+		<view-handler>com.sun.facelets.FaceletViewHandler</view-handler>
+	</application>
+
+	<managed-bean>
+		<managed-bean-name>mBSesion</managed-bean-name>
+		<managed-bean-class>presentacion.MBSesion</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>mensajesMB</property-name>
+			<value>#{monitorMensajesMB}</value>
+		</managed-property>
+	</managed-bean>	
+
+	<managed-bean>
+		<managed-bean-name>appVariables</managed-bean-name>
+		<managed-bean-class>presentacion.AppVariables</managed-bean-class>
+		<managed-bean-scope>application</managed-bean-scope>
+	</managed-bean>
+	
+</faces-config>

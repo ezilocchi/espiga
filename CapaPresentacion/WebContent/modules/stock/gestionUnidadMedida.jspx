@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition template="/templates/ABM.jspx"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:custom="http://code.google.com/p/sandia-project/custom">
+
+	<ui:param name="managedBean" value="#{gestionUnidadMedidaMB}"></ui:param>
+	<ui:param name="entitiesTitle" value="Unidades Medida"></ui:param>
+	<ui:param name="entityTitle" value="Relacion Insumo"></ui:param>
+
+	<ui:define name="title">Gestionar Unidad Medida</ui:define>
+
+	<ui:define name="dataTableContent">
+		<custom:textColumn row="#{item.nombre}" cabecera="Nombre" filtro="#{gestionUnidadMedidaMB.filtro.nombre}"></custom:textColumn>
+		<custom:typeColumn row="#{item.descripcion}" cabecera="Unidad Insumo" ></custom:typeColumn>
+		<custom:numberColumn row="#{item.descripcion}" cabecera="Cantidad" filtro="#{gestionUnidadMedidaMB.filtro.cantidad}"></custom:numberColumn>
+	</ui:define>
+
+	<ui:define name="entity">
+		<h:outputText value="Nombre: "></h:outputText>
+		<h:outputText value="#{managedBean.entity.nombre}"></h:outputText>
+		<h:outputText value="Unidad Insumo: "></h:outputText>
+		<h:outputText value="#{managedBean.entity.unidadMedidaInsumo}"></h:outputText>
+		<h:outputText value="Cantidad: "></h:outputText>
+		<h:outputText value="#{managedBean.entity.cantidad}" />
+	</ui:define>
+
+	<ui:define name="panelContent">
+		<h:outputText value="Nombre "></h:outputText>
+		<custom:inputText value="#{managedBean.entity.nombre}"
+			id="UnidadMedidaInsumoCompra_nombre" required="true"></custom:inputText>
+		<h:outputText value="Descripcion "></h:outputText>
+		<custom:inputText value="#{managedBean.entity.descripcion}"
+			id="UnidadMedidaInsumoCompra_descripcion"></custom:inputText>
+		<h:outputText value="Unidad Medida "></h:outputText>
+		<custom:combo value="#{managedBean.unidades}" 
+			id="UnidadMedidaInsumoCompra_unidadMedidaInsumo" required="true"></custom:combo>
+		<h:outputText value="Cantidad "></h:outputText>		
+		<custom:inputText id="UnidadMedidaInsumoCompra_cantidad"
+			value="#{managedBean.entity.cantidad}"></custom:inputText>
+	</ui:define>
+</ui:composition>
+

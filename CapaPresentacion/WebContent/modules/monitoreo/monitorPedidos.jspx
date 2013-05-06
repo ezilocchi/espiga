@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition template="/templates/template.jspx"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:custom="http://code.google.com/p/sandia-project/custom">
+
+	<ui:define name="content">
+		<a4j:form>
+			<rich:dataTable var="item" value="#{monitorPedidosMB.pedidos.model }" id="pedidos"
+				columnsWidth="10%,10%,30%,15%,10%,15%,10%">
+				<f:facet name="header">					
+					<h:panelGrid columns="2" width="100%"
+						columnClasses=",ABMColumnLabel">
+						<h:outputText value="Monitor Pedidos"></h:outputText>
+						<h:panelGroup>		
+							<a4j:commandButton value="Buscar" image="/images/find.png" id="btnFiltrar" 
+								reRender="pedidos" actionListener="#{monitorPedidosMB.buscar }" title="Filtrar"></a4j:commandButton>										
+							<h:commandLink target="_new" actionListener="#{monitorPedidosMB.print}">
+								<h:graphicImage url="/images/icons/Impresora_01_25x25.png" 
+									style="border:0px;" title="Imprimir Listado"></h:graphicImage>
+							</h:commandLink>
+						</h:panelGroup>												
+					</h:panelGrid>
+				</f:facet>
+				<custom:numberColumn cabecera="Nro" row="#{item.id}" filtro="#{monitorPedidosMB.filtro.id}"/>
+				<custom:dateColumn cabecera="Fecha Entrega" row="#{item.fechaEntrega}" 
+					desde="#{monitorPedidosMB.filtro.fechaEntregaDesde }" hasta="#{monitorPedidosMB.filtro.fechaEntregaHasta}"/>
+				<custom:textColumn cabecera="Clietne" row="#{item.cliente.razonSocial}" filtro="#{monitorPedidosMB.filtro.cliente.razonSocial}"/>
+				<custom:simpleColumn cabecera="Zona" row="#{item.zona.nombre}"/>				
+				<custom:currencyColumn cabecera="Monto" row="#{item.total}"/>
+				<custom:typeColumn cabecera="Estado" row="#{item.estado.nombre}" filtro="#{monitorPedidosMB.estados}"/>
+				<rich:column>
+					<f:facet name="header">
+						<h:outputText value="Detalle"></h:outputText>
+					</f:facet>
+					<a4j:commandButton image="/images/find.png" title="Ver Detalle"
+						reRender="panelDetalle"
+						actionListener="#{monitorPedidosMB.showPedido}"></a4j:commandButton>										
+				</rich:column>				
+			</rich:dataTable>			
+		</a4j:form>
+	</ui:define>
+
+	
+	<ui:define name="panel">
+		<h:panelGroup id="panelDetalle">
+			<rich:modalPanel width="750" resizeable="false" moveable="false"
+				autosized="true" rendered="#{monitorPedidosMB.renderPanelDetalle}"
+				showWhenRendered="true">
+				<f:facet name="header">
+					<h:outputText value="Pedido"></h:outputText>
+				</f:facet>
+				<a4j:form>
+					<h:panelGrid columnClasses="marcoColumna" width="100%">
+						<h:panelGrid columns="2" width="100%"
+							headerClass="rich-table-subheadercell">
+							<f:facet name="header">
+								<h:outputText value="Pedido"></h:outputText>
+							</f:facet>
+							<h:panelGrid columns="2" width="100%"
+								columnClasses="ABMColumnLabel,ABMColumnOutput">
+								<h:outputText value="Nro: "></h:outputText>
+								<h:outputText value="#{monitorPedidosMB.pedido.id}"></h:outputText>
+								<h:outputText value="#{msgs.entidad_venta}"></h:outputText>
+								<h:outputText
+									value="#{monitorPedidosMB.pedido.cliente.razonSocial}"></h:outputText>
+							</h:panelGrid>
+							<h:panelGrid columns="2" width="100%"
+								columnClasses="ABMColumnLabel,ABMColumnOutput">
+								<h:outputText value="Fecha: "></h:outputText>
+								<h:outputText value="#{monitorPedidosMB.pedido.fecha}">
+									<f:convertDateTime dateStyle="short" timeZone="Etc/GMT-2" />
+								</h:outputText>
+								<h:outputText value="Fecha Entrega: "></h:outputText>
+								<h:outputText value="#{monitorPedidosMB.pedido.fechaEntrega}">
+									<f:convertDateTime dateStyle="short" timeZone="Etc/GMT-2" />
+								</h:outputText>
+							</h:panelGrid>
+						</h:panelGrid>
+						<rich:dataTable value="#{monitorPedidosMB.detalle.model}"
+							id="detalle" var="item" width="100%"
+							columnsWidth="25%,25%,12%,12%,14%,12%">
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{msgs.producto_tipo}"></h:outputText>
+								</f:facet>
+								<h:outputText value="#{item.producto.tipo.nombre}"></h:outputText>
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{msgs.producto}"></h:outputText>
+								</f:facet>
+								<h:outputText value="#{item.producto.nombre}"></h:outputText>
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{msgs.producto_cantidad}"></h:outputText>
+								</f:facet>
+								<h:outputText value="#{item.cantidad} "></h:outputText>
+								<h:outputText value="#{item.producto.unidadMedida.nombre}"></h:outputText>
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{msgs.producto_precio_lista}"></h:outputText>
+								</f:facet>
+								<h:panelGroup>
+								<h:outputText value="$"></h:outputText>
+								<h:outputText value="#{item.producto.precioLista}">
+								<f:convertNumber maxFractionDigits="2"/></h:outputText>
+								</h:panelGroup>
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{msgs.producto_precio_venta}"></h:outputText>
+								</f:facet>
+								<h:panelGroup>
+								<h:outputText value="$"></h:outputText>
+								<h:outputText value="#{item.precioVentaUnitario}"
+									style="width:100%">
+								<f:convertNumber maxFractionDigits="2"/></h:outputText>
+								</h:panelGroup>
+							</rich:column>
+							<rich:column id="subTotal">
+								<f:facet name="header">
+									<h:outputText value="#{msgs.sub_total}"></h:outputText>
+								</f:facet>
+								<h:panelGroup>
+								<h:outputText value="$"></h:outputText>
+								<h:outputText value="#{item.cantidad*item.precioVentaUnitario}">
+									<f:convertNumber maxFractionDigits="2" />
+								</h:outputText>
+								</h:panelGroup>
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="Estado"></h:outputText>
+								</f:facet>								
+								<h:outputText value="#{item.estado.nombre}"></h:outputText>
+							</rich:column>
+							<f:facet name="footer">
+								<h:panelGrid rowClasses="rowButton" width="90%">
+									<h:panelGroup>
+										<h:outputText value="Total: "/>
+										<h:outputText value="$"/>
+										<h:outputText value="#{monitorPedidosMB.pedido.total}" id="total">
+											<f:convertNumber maxFractionDigits="2" />
+										</h:outputText>
+									</h:panelGroup>
+								</h:panelGrid>
+							</f:facet>
+						</rich:dataTable>
+					</h:panelGrid>
+					<h:panelGrid style="width:100%;text-align:right;">
+						<a4j:commandButton value="#{msgs.aceptar}" 
+							reRender="panelDetalle" ajaxSingle="true"
+							actionListener="#{monitorPedidosMB.hidePedido}"></a4j:commandButton>
+					</h:panelGrid>
+				</a4j:form>
+			</rich:modalPanel>
+		</h:panelGroup>
+	</ui:define>
+	
+</ui:composition>
+

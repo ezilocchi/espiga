@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition template="/templates/ABM.jspx"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:custom="http://code.google.com/p/sandia-project/custom">		 
+	
+		<ui:define name="script">
+		<a4j:loadScript src="resource:///script/selectRow.js"></a4j:loadScript>
+	</ui:define>  
+
+	<ui:param name="managedBean" value="#{gestionInsumoMB}"></ui:param>
+	<ui:param name="entitiesTitle" value="Insumos"></ui:param>
+	<ui:param name="entityTitle" value="Insumo"></ui:param>
+
+	<ui:define name="title">
+		#{msgs.insumo_gestionar}
+	</ui:define>
+
+	<ui:define name="dataTableContent">
+		<custom:textColumn cabecera="#{msgs.nombre}" row="#{item.nombre}" filtro="#{gestionInsumoMB.filtro.nombre }"/>
+		<custom:numberColumn cabecera="Stock" row="#{item.stockDisponible}" filtro="#{gestionInsumoMB.filtro.stockDisponible }"/>		
+		<custom:typeColumn cabecera="Unidad" row="#{item.unidadMedida}" filtro="#{gestionInsumoMB.unidadesFiltro }"/>
+	</ui:define>
+
+	<ui:define name="entity">
+		<h:outputText value="#{msgs.insumo_nombre2}"></h:outputText>
+		<h:outputText value="#{managedBean.entity.nombre}"></h:outputText>
+		<h:outputText value="#{msgs.insumo_descripcion}"></h:outputText>
+		<h:outputText value="#{managedBean.entity.descripcion}"></h:outputText>
+		<h:outputText value="#{msgs.insumo_unidad_medida}"></h:outputText>
+		<h:outputText value="#{managedBean.entity.unidadMedida.nombre}"></h:outputText>
+		<h:outputText value="#{msgs.insumo_stock_disponible}"></h:outputText>
+		<h:outputText value="#{managedBean.entity.stockDisponible}"></h:outputText>
+	</ui:define>
+	
+	<ui:define name="entityDetail">
+		<rich:dataTable value="#{gestionInsumoMB.unidadesCompra.model}" var="item"
+			headerClass="rich-table-subheadercell">
+			<f:facet name="header">
+				<h:panelGrid columns="2" width="100%"
+					columnClasses=",ABMColumnLabel">
+					<h:outputText value="Unidad Medida Compra"></h:outputText>					
+					<h:panelGroup>
+						<a4j:commandLink ajaxSingle="true"
+							reRender="panelUnidad"
+							title="Nuevo"
+							disabled="#{!managedBean.selected}"
+							actionListener="#{gestionInsumoMB.renderUnidad}">
+							<a4j:actionparam assignTo="#{gestionInsumoMB.actionUnidad}" 
+								value="#{appVariables.actionNEW}"
+								actionListener="#{gestionInsumoMB.renderUnidad}"></a4j:actionparam>
+							<h:graphicImage url="/images/sinonimoSmall.png" rendered="#{managedBean.selected}" style="border:0px;"></h:graphicImage>
+							<h:graphicImage url="/images/sinonimoSmall_Disabled.png" rendered="#{!managedBean.selected}" style="border:0px;"></h:graphicImage>
+						</a4j:commandLink>						
+						<a4j:commandLink ajaxSingle="true"
+							reRender="panelUnidad"
+							title="Editar"
+							disabled="#{!gestionInsumoMB.selectedUnidad}"
+							actionListener="#{gestionInsumoMB.renderUnidad}">
+							<a4j:actionparam assignTo="#{gestionInsumoMB.actionUnidad}" 
+								value="#{appVariables.actionUPDATE}"
+								actionListener="#{gestionInsumoMB.renderUnidad}"></a4j:actionparam>
+							<h:graphicImage url="/images/editarSmallBtn.png" rendered="#{gestionInsumoMB.selectedUnidad}" style="border:0px;"></h:graphicImage>
+							<h:graphicImage url="/images/editarSmallBtn-dis.png" rendered="#{!gestionInsumoMB.selectedUnidad}" style="border:0px;"></h:graphicImage>
+						</a4j:commandLink>
+						<a4j:commandLink actionListener="#{gestionInsumoMB.deleteUnidad}"
+							ajaxSingle="true" 
+							reRender="panel"
+							title="Borrar" 
+							disabled="#{!gestionInsumoMB.selectedUnidad}"
+							onclick="javascript:if (!confirm('Confirma que desea borrar'))return false;">
+							<h:graphicImage url="/images/eliminarSmallBtn.png" rendered="#{gestionInsumoMB.selectedUnidad}" style="border:0px;"></h:graphicImage>
+							<h:graphicImage url="/images/eliminarSmallBtn-dis.png" rendered="#{!gestionInsumoMB.selectedUnidad}" style="border:0px;"></h:graphicImage>
+						</a4j:commandLink>
+					</h:panelGroup>					
+				</h:panelGrid>
+			</f:facet>
+			<a4j:support event="onRowClick" 
+				reRender="subDetail" 
+				actionListener="#{managedBean.selectUnidad}"
+				oncomplete="selectRow(this)"></a4j:support>
+			<custom:simpleColumn cabecera="#{msgs.nombre}" row="#{item.nombre}" />
+			<custom:simpleColumn cabecera="#{msgs.descripcion}" row="#{item.descripcion}"/>
+			<custom:simpleColumn cabecera="Cantidad" row="#{item.cantidad}" />		
+			<custom:currencyColumn cabecera="Precio" row="#{item.precioUnitario}"/>
+			<rich:column>
+				<f:facet name="header">
+					<h:outputText value="Pred"></h:outputText>
+				</f:facet>
+				<h:selectBooleanCheckbox disabled="true"
+					value="#{item.predeterminada}"></h:selectBooleanCheckbox>
+			</rich:column>
+		</rich:dataTable>
+		
+	</ui:define>
+	
+	<ui:define name="panelDetail">
+		<h:panelGroup id="panelUnidad">
+			<rich:modalPanel  width="550" resizeable="false" moveable="false" autosized="true"
+				rendered="#{gestionInsumoMB.renderUnidad}" showWhenRendered="true">
+				<f:facet name="header">
+					<h:outputText value="Unidad Medida Compra"></h:outputText>
+				</f:facet>
+				<rich:messages globalOnly="true"></rich:messages>
+				<a4j:form>				
+				<h:panelGrid columnClasses="marcoColumna" width="100%">
+					<h:panelGrid columns="2" width="100%" 
+						columnClasses="ABMColumnLabel,ABMColumnInput" >
+						<h:outputText value="#{msgs.nombre} "></h:outputText>
+						<custom:inputText value="#{gestionInsumoMB.unidad.nombre}" 
+							id="UnidadMedidaInsumoCompra_nombre" required="true"></custom:inputText>		
+						<h:outputText value="#{msgs.descripcion}"></h:outputText>
+						<custom:inputText value="#{gestionInsumoMB.unidad.descripcion}" 
+							id="UnidadMedidaInsumoCompra_descripcion"></custom:inputText>		
+						<h:outputText value="Precio Unitario Medio "></h:outputText>
+						<custom:inputText value="#{gestionInsumoMB.unidad.precioUnitario}" 
+							id="UnidadMedidaInsumoCompra_precioUnitario" required="true"></custom:inputText>																	
+						<h:outputText value="Cantidad"></h:outputText>
+						<custom:inputText value="#{gestionInsumoMB.unidad.cantidad}" 
+							id="UnidadMedidaInsumoCompra_cantidad" ></custom:inputText>																	
+						<h:outputText value="Predeterminada"></h:outputText>
+						<h:panelGroup>
+							<h:selectBooleanCheckbox id="UnidadMedidaInsumoCompra_predeterminada"
+								value="#{gestionInsumoMB.unidad.predeterminada}"></h:selectBooleanCheckbox>
+							<rich:message for="UnidadMedidaInsumoCompra_predeterminada"></rich:message>
+						</h:panelGroup>
+					</h:panelGrid>
+				</h:panelGrid>
+				<h:panelGrid style="width:100%;text-align:right;">
+					<h:panelGroup>
+						<a4j:commandButton value="#{msgs.aceptar}"
+							reRender="panelUnidad,panel"
+							actionListener="#{gestionInsumoMB.acceptUnidad}"></a4j:commandButton>
+						<a4j:commandButton value="#{msgs.cancelar}"
+							ajaxSingle="true" 
+							reRender="panelUnidad,entity" 
+							actionListener="#{gestionInsumoMB.cancelUnidad}"></a4j:commandButton>
+					</h:panelGroup>
+				</h:panelGrid>
+				</a4j:form>				
+			</rich:modalPanel>
+		</h:panelGroup>
+	</ui:define>
+	
+	<ui:define name="panelContent">
+		<h:outputText value="#{msgs.nombre} "></h:outputText>
+		<custom:inputText value="#{managedBean.entity.nombre}" 
+			id="Insumo_nombre" required="true"></custom:inputText>		
+		<h:outputText value="#{msgs.descripcion}"></h:outputText>
+		<custom:inputText value="#{managedBean.entity.descripcion}" 
+			id="Insumo_descripcion"></custom:inputText>		
+		<h:outputText value="Unidad Medida "></h:outputText>
+		<custom:combo value="#{managedBean.unidades}" 
+			id="Insumo_unidadMedida" required="true"></custom:combo>
+		<h:outputText value="Stock Disponible "></h:outputText>
+		<custom:inputText value="#{managedBean.entity.stockDisponible}" 
+			id="Insumo_stockDisponible" required="true"></custom:inputText>				
+	</ui:define>
+	
+</ui:composition>
+

@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition template="/templates/ABM.jspx"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:custom="http://code.google.com/p/sandia-project/custom">
+
+	<ui:param name="managedBean" value="#{gestionProveedorMB}"></ui:param>
+	<ui:param name="entitiesTitle" value="Proveedores"></ui:param>
+	<ui:param name="entityTitle" value="Proveedor"></ui:param>
+
+	<ui:define name="title">
+		#{msgs.gestion_proveedores }
+	</ui:define>
+
+	<ui:define name="dataTableContent">
+		<custom:textColumn row="#{item.razonSocial}" cabecera="Razon Social"></custom:textColumn>
+		<custom:textColumn row="#{item.direccion}" cabecera="Direccion"></custom:textColumn>		
+	</ui:define>
+
+	<ui:define name="entity">
+		<h:outputText value="#{msgs.razon_social}: "></h:outputText>
+		<h:outputText value="#{managedBean.entity.razonSocial}"></h:outputText>
+		<h:outputText value="Cuit: "></h:outputText>
+		<h:outputText value="#{managedBean.entity.cuit}"></h:outputText>
+		<h:outputText value="Mail: "></h:outputText>
+		<h:outputText value="#{managedBean.entity.mail}" />
+		<h:outputText value="#{msgs.telefono}: "></h:outputText>
+		<h:outputText value="#{managedBean.entity.telefono}" />
+		<h:outputText value="#{msgs.direccion}: "></h:outputText>
+		<h:outputText value="#{managedBean.entity.direccion}"></h:outputText>		
+	</ui:define>
+	
+	<ui:define name="entityDetail">
+		<rich:dataTable value="#{gestionProveedorMB.insumos.model}" var="item"
+			headerClass="rich-table-subheadercell" onRowMouseOver="this.style.backgroundColor='#F3E8C9'"
+			onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+			<f:facet name="header">
+				<h:panelGrid columns="2" width="100%"
+					columnClasses=",ABMColumnLabel">
+					<h:outputText value="Insumos"></h:outputText>					
+					<h:panelGroup>
+						<a4j:commandLink ajaxSingle="true"
+							reRender="panelInsumos"
+							title="Nuevo"
+							disabled="#{!gestionProveedorMB.selected}"
+							actionListener="#{gestionProveedorMB.renderInsumo}">
+							<a4j:actionparam assignTo="#{gestionProveedorMB.actionsInsumo}" 
+								value="#{appVariables.actionNEW}"
+								actionListener="#{gestionProveedorMB.renderInsumo}"></a4j:actionparam>
+							<h:graphicImage url="/images/sinonimoSmall.png" rendered="#{managedBean.selected}" style="border:0px;"></h:graphicImage>
+							<h:graphicImage url="/images/sinonimoSmall_Disabled.png" rendered="#{!managedBean.selected}" style="border:0px;"></h:graphicImage>
+						</a4j:commandLink>						
+						<a4j:commandLink ajaxSingle="true"
+							reRender="panelInsumos"
+							title="Editar"
+							disabled="#{!gestionProveedorMB.selectedInsumo}"
+							actionListener="#{gestionProveedorMB.renderInsumo}">
+							<a4j:actionparam assignTo="#{gestionProveedorMB.actionInsumo}" 
+								value="#{appVariables.actionUPDATE}"
+								actionListener="#{gestionProveedorMB.renderInsumo}"></a4j:actionparam>
+							<h:graphicImage url="/images/editarSmallBtn.png" rendered="#{gestionProveedorMB.selectedInsumo}" style="border:0px;"></h:graphicImage>
+							<h:graphicImage url="/images/editarSmallBtn-dis.png" rendered="#{!gestionProveedorMB.selectedInsumo}" style="border:0px;"></h:graphicImage>
+						</a4j:commandLink>
+						<a4j:commandLink actionListener="#{gestionProveedorMB.deleteInsumo}"
+							ajaxSingle="true" 
+							reRender="panel"
+							title="Borrar" 
+							disabled="#{!gestionProveedorMB.selectedInsumo}"
+							onclick="javascript:if (!confirm('Confirma que desea borrar'))return false;">
+							<h:graphicImage url="/images/eliminarSmallBtn.png" rendered="#{gestionProveedorMB.selectedInsumo}" style="border:0px;"></h:graphicImage>
+							<h:graphicImage url="/images/eliminarSmallBtn-dis.png" rendered="#{!gestionProveedorMB.selectedInsumo}" style="border:0px;"></h:graphicImage>
+						</a4j:commandLink>
+					</h:panelGroup>
+					
+				</h:panelGrid>
+			</f:facet>
+			<a4j:support event="onRowClick" 
+				reRender="subDetail" 
+				actionListener="#{managedBean.selectInsumoList}"></a4j:support>
+			<custom:simpleColumn cabecera="#{msgs.nombre}" row="#{item.nombre}" />
+			<custom:simpleColumn cabecera="Stock" row="#{item.stockDisponible}" />		
+			<custom:simpleColumn cabecera="Unidad" row="#{item.unidadMedida}"/>			
+		</rich:dataTable>
+		
+	</ui:define>
+	
+	<ui:define name="panelDetail">
+		<h:panelGroup id="panelInsumos">
+			<rich:modalPanel  width="550" resizeable="false" moveable="false" autosized="true"
+				rendered="#{managedBean.renderInsumo}" showWhenRendered="true">
+				<f:facet name="header">
+					<h:outputText value="Insumo"></h:outputText>
+				</f:facet>
+				<rich:messages globalOnly="true"></rich:messages>
+				<a4j:form>
+						<h:panelGrid columns="2" width="100%" 
+							columnClasses="ABMColumnLabel,ABMColumnInput" >
+							<h:outputText value="Insumo "></h:outputText>
+							<rich:comboBox id="Receta_tipoProducto" width="100"
+								value="#{managedBean.insumosSelect.itemSelected}">
+								<a4j:support event="onselect" 
+									reRender="detalle"
+									ajaxSingle="true"
+									actionListener="#{managedBean.selectInsumo }"></a4j:support>
+								<f:selectItems value="#{managedBean.insumosSelect.items}"></f:selectItems>
+							</rich:comboBox>														
+						</h:panelGrid>
+					<h:panelGrid columnClasses="marcoColumna" width="100%">
+						<h:panelGrid columns="2" width="100%" id="detalle"
+							columnClasses="ABMColumnLabel,ABMColumnOutput" >
+							<h:outputText value="#{msgs.insumo_nombre2}"></h:outputText>
+							<h:outputText value="#{managedBean.insumo.nombre}"></h:outputText>
+							<h:outputText value="#{msgs.insumo_descripcion}"></h:outputText>
+							<h:outputText value="#{managedBean.insumo.descripcion}"></h:outputText>
+							<h:outputText value="#{msgs.insumo_unidad_medida}"></h:outputText>
+							<h:outputText value="#{managedBean.insumo.unidadMedida.nombre}"></h:outputText>
+							<h:outputText value="#{msgs.insumo_stock_disponible}"></h:outputText>
+							<h:outputText value="#{managedBean.insumo.stockDisponible}"></h:outputText>
+						</h:panelGrid>						
+					</h:panelGrid>
+					<h:panelGrid style="width:100%;text-align:right;">
+						<h:panelGroup>
+							<a4j:commandButton value="#{msgs.aceptar}"
+								reRender="panelInsumos,panel"
+								actionListener="#{managedBean.acceptInsumo}"></a4j:commandButton>
+							<a4j:commandButton value="#{msgs.cancelar}"
+								ajaxSingle="true" 
+								reRender="panelInsumos,entity" 
+								actionListener="#{managedBean.cancelInsumo}"></a4j:commandButton>							
+						</h:panelGroup>
+					</h:panelGrid>
+				</a4j:form>
+			</rich:modalPanel>
+		</h:panelGroup>
+	</ui:define>
+
+	<ui:define name="panelContent">
+		<h:outputText value="#{msgs.razon_social}"></h:outputText>
+		<custom:inputText value="#{managedBean.entity.razonSocial}"
+			id="Proveedor_razonSocial" required="true"></custom:inputText>		
+		<h:outputText value="Cuit "></h:outputText>
+		<custom:inputText value="#{managedBean.entity.cuit}"
+			id="Proveedor_cuit" required="true"></custom:inputText>		
+		<h:outputText value="Mail "></h:outputText>
+		<custom:inputText id="Empleado_mail" required="true"
+			value="#{managedBean.entity.mail}"></custom:inputText>		
+		<h:outputText value="#{msgs.telefono}"></h:outputText>
+		<custom:inputText value="#{managedBean.entity.telefono}"
+			id="Proveedor_telefono" ></custom:inputText>				
+		<h:outputText value="Barrio "></h:outputText>
+		<custom:buscadorBarrio target="#{managedBean.entity.direccion.barrio}" 
+			required="true" id="barrio"/>			
+		<h:outputText value="Calle "></h:outputText>
+		<custom:inputText value="#{managedBean.entity.direccion.calle}"
+			id="Proveedor_calle" required="true"></custom:inputText>		
+		<h:outputText value="#{msgs.numero}"></h:outputText>
+		<custom:inputText value="#{managedBean.entity.direccion.numero}"
+			id="Proveedor_numero" required="true"></custom:inputText>		
+		<h:outputText value="#{msgs.entidad_venta_piso}"></h:outputText>
+		<custom:inputText value="#{managedBean.entity.direccion.piso}"
+			id="Proveedor_piso" required="false"></custom:inputText>		
+		<h:outputText value="#{msgs.entidad_venta_depto}"></h:outputText>
+		<custom:inputText value="#{managedBean.entity.direccion.depto}"
+			id="Proveedor_depto" required="false"></custom:inputText>		
+	</ui:define>	
+</ui:composition>
+

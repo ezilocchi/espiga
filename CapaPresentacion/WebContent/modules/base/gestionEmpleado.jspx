@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition template="/templates/ABM.jspx"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:custom="http://code.google.com/p/sandia-project/custom">
+
+	<ui:param name="managedBean" value="#{gestionEmpleadoMB}"></ui:param>
+	<ui:param name="entitiesTitle" value="Empleados"></ui:param>
+	<ui:param name="entityTitle" value="Empleado"></ui:param>
+
+	<ui:define name="title">
+		#{msgs.empleado_gestionar}
+	</ui:define>
+
+	<ui:define name="dataTableContent">
+		<custom:textColumn row="#{item.apellido}" cabecera="#{msgs.apellido }" filtro="#{managedBean.filtro.apellido}"></custom:textColumn>
+		<custom:textColumn row="#{item.nombres}" cabecera="Nombres" filtro="#{managedBean.filtro.nombres}"></custom:textColumn>
+		<custom:typeColumn row="#{item.cargo}" cabecera="Cargo" filtro="#{managedBean.cargos}"></custom:typeColumn>		
+	</ui:define>
+
+	<ui:define name="entity">
+		<h:outputText value="#{msgs.apellido}: "></h:outputText>
+		<h:outputText value="#{managedBean.entity.apellido}"></h:outputText>
+		<h:outputText value="#{msgs.nombre}: "></h:outputText>
+		<h:outputText value="#{managedBean.entity.nombres}"></h:outputText>
+		<h:outputText value="#{msgs.tipo_documento}: "></h:outputText>
+		<h:outputText value="#{managedBean.entity.tipoDocumento}" />
+		<h:outputText value="#{msgs.documento}: "></h:outputText>
+		<h:outputText value="#{managedBean.entity.nroDocumento}" />
+		<h:outputText value="#{msgs.cargo}: "></h:outputText>
+		<h:outputText value="#{managedBean.entity.cargo}"></h:outputText>		
+		<h:outputText value="#{msgs.entidad_venta_barrio}"></h:outputText>
+		<h:outputText value="#{managedBean.entity.direccion.barrio.nombre}" />
+		<h:outputText value="#{msgs.entidad_venta_calle}"></h:outputText>
+		<h:outputText value="#{managedBean.entity.direccion.calle}" />
+		<h:outputText value="#{msgs.entidad_venta_nro}"></h:outputText>
+		<h:outputText value="#{managedBean.entity.direccion.numero}" />
+		<h:outputText value="#{msgs.entidad_venta_piso2}"></h:outputText>
+		<h:outputFormat value="#{managedBean.entity.direccion.piso}" />
+		<h:outputText value="#{msgs.entidad_venta_depto2}"></h:outputText>
+		<h:outputText value="#{managedBean.entity.direccion.depto}" />
+		<h:outputText value="#{msgs.entidad_venta_localidad}: "></h:outputText>
+		<h:outputText value="#{managedBean.entity.direccion.barrio.localidad.nombre }"></h:outputText>
+		<h:outputText value="#{msgs.entidad_venta_provincia}: "></h:outputText>
+		<h:outputText value="#{managedBean.entity.direccion.barrio.localidad.provincia.nombre }"></h:outputText>
+	</ui:define>
+
+	<ui:define name="panelContent">
+		<h:outputText value="#{msgs.apellido} "></h:outputText>
+		<custom:inputText value="#{managedBean.entity.apellido}"
+			id="Empleado_apellido" required="true"></custom:inputText>		
+		<h:outputText value="#{msgs.nombre} "></h:outputText>
+		<custom:inputText value="#{managedBean.entity.nombres}"
+			id="Empleado_nombres" required="true"></custom:inputText>
+		
+		<h:outputText value="#{msgs.tipo_documento}"></h:outputText>
+		<custom:combo id="Empleado_tipoDocumento" required="true"
+			value="#{managedBean.tiposDocumento}"></custom:combo>		
+		<h:outputText value="#{msgs.documento} "></h:outputText>
+		<custom:inputText value="#{managedBean.entity.nroDocumento}"
+			id="Empleado_nroDocumento" required="true"></custom:inputText>		
+		<h:outputText value="#{msgs.cargo}"></h:outputText>
+		<custom:combo id="Empleado_cargo" required="true"
+			value="#{managedBean.cargos}"></custom:combo>		
+		
+		<h:outputText value="Barrio "></h:outputText>
+		<custom:buscadorBarrio target="#{managedBean.entity.direccion.barrio}" 
+			required="true" id="barrio"/>			
+		<h:outputText value="Calle "></h:outputText>
+		<custom:inputText value="#{managedBean.entity.direccion.calle}"
+			id="Empleado_calle" required="true"></custom:inputText>		
+		<h:outputText value="Numero "></h:outputText>
+		<custom:inputText value="#{managedBean.entity.direccion.numero}"
+			id="Empleado_numero" required="true"></custom:inputText>		
+		<h:outputText value="#{msgs.entidad_venta_piso}"></h:outputText>
+		<custom:inputText value="#{managedBean.entity.direccion.piso}"
+			id="Empleado_piso" required="false"></custom:inputText>		
+		<h:outputText value="#{msgs.entidad_venta_depto}"></h:outputText>
+		<custom:inputText value="#{managedBean.entity.direccion.depto}"
+			id="Empleado_depto" required="false"></custom:inputText>		
+	</ui:define>	
+</ui:composition>
+

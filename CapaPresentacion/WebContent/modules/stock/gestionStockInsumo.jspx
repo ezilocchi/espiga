@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition template="/templates/template.jspx"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:custom="http://code.google.com/p/sandia-project/custom">
+
+	<ui:define name="title">
+		<h:outputText value="#{msgs.gestion_stock }"></h:outputText>
+	</ui:define>
+	
+	<ui:define name="content">
+		<a4j:form id="miForm">
+			<h:panelGrid columns="2" columnClasses="marcoColumna50,marcoColumna50" width="100%" id="panel">			
+				<rich:dataTable var="item" value="#{gestionStockInsumosMB.entities.model}"
+					headerClass="rich-table-subheadercell" id="entities"
+					onRowMouseOver="this.style.backgroundColor='#F3E8C9'"
+					onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+					<f:facet name="header">					
+						<h:panelGrid columns="2" width="100%"
+							columnClasses=",ABMColumnLabel">
+							<h:outputText value="Insumos"></h:outputText>
+							<h:panelGroup>		
+								<a4j:commandButton image="/images/icons/LimpiarFiltros_25x25.png"  id="btnLimpiarFiltrar" 
+									reRender="entities" actionListener="#{gestionStockInsumosMB.limpiarFiltro }" title="Limpiar Filtro"></a4j:commandButton>
+								<a4j:commandButton image="/images/find.png" id="btnFiltrar" 
+									reRender="entities" actionListener="#{gestionStockInsumosMB.buscar }" title="Filtrar"></a4j:commandButton>					
+							</h:panelGroup>												
+						</h:panelGrid>
+					</f:facet>												
+					<a4j:support event="onRowClick" 
+						reRender="detalle" 
+						actionListener="#{gestionStockInsumosMB.selectEntity}"></a4j:support>
+					<custom:textColumn row="#{item.nombre }" cabecera="#{msgs.nombre}" filtro="#{gestionStockInsumosMB.filtro.nombre }"></custom:textColumn>
+					<custom:typeColumn row="#{item.nombreGestion}" cabecera="#{msgs.estrategia_gestion }" filtro="#{gestionStockInsumosMB.estrategiasFiltro}"/>					
+					<rich:column>
+						<f:facet name="header">
+							<h:panelGroup>
+								<h:outputText value="Stock Actual"></h:outputText>
+								<br/>
+								<h:inputText value="#{gestionStockInsumosMB.filtro.stockDisponible}" style="width: 100%"></h:inputText>
+							</h:panelGroup>
+						</f:facet>
+						<h:outputText value="#{item.stockDisponible} #{item.unidadMedida.nombre}"></h:outputText>
+					</rich:column>										
+					<rich:column width="80">
+						<f:facet name="header">
+							<h:panelGroup>
+								<h:outputText value="Estado"></h:outputText>
+								<rich:comboBox value="#{gestionStockInsumosMB.estados.itemSelected}" width="80" 
+									style="margin-left: auto;margin-right: auto;">
+									<a4j:support event="onselect" 
+										reRender="entities"
+										ajaxSingle="true"
+										actionListener="#{gestionStockInsumosMB.selectEstado}"></a4j:support>
+									<f:selectItem itemLabel="TODOS" itemValue="TODOS"/>									
+									<f:selectItems value="#{gestionStockInsumosMB.estados.items}"></f:selectItems>
+								</rich:comboBox>
+							</h:panelGroup>
+						</f:facet>
+						<rich:panel style="background: red;" bodyClass="dateColumn"
+							rendered="#{gestionStockInsumosMB.rojo == item.estado}">
+							<h:outputText value="#{item.estado.nombre }"></h:outputText>
+						</rich:panel>
+						<rich:panel style="background: yellow;" bodyClass="dateColumn"
+							rendered="#{gestionStockInsumosMB.amarillo == item.estado }">
+							<h:outputText value="#{item.estado.nombre }"></h:outputText>
+						</rich:panel>
+						<rich:panel style="background: green;" bodyClass="dateColumn"
+							rendered="#{gestionStockInsumosMB.verde == item.estado }">
+							<h:outputText value="#{item.estado.nombre }"></h:outputText>
+						</rich:panel>						
+															
+					</rich:column>
+				</rich:dataTable>
+			
+				<h:panelGrid columns="2" headerClass="rich-table-subheadercell"
+					columnClasses="ABMColumnLabel,ABMColumnOutput" width="100%"
+					id="detalle">
+					<f:facet name="header">
+						<h:panelGrid columns="2" width="100%"
+							columnClasses=",ABMColumnLabel">
+							<h:outputText value="#{msgs.gestion_stock }"></h:outputText>							
+							<h:panelGroup>
+								<a4j:commandLink ajaxSingle="true"
+									title="Realizar Pedido"
+									action="#{generarOrdenCompraMB.generarOrdenCompra }"
+									disabled="#{!gestionStockInsumosMB.selected}">
+									<f:setPropertyActionListener value="#{gestionStockInsumosMB.entity}" target="#{generarOrdenCompraMB.insumoSelected }"/>									
+									<h:graphicImage url="/images/icons/OrdenCompra_Agregar_20x20.png" rendered="#{gestionStockInsumosMB.selected}" style="border:0px;"></h:graphicImage>
+									<h:graphicImage url="/images/icons/OrdenCompra_Agregar_Disabled_20x20.png" rendered="#{!gestionStockInsumosMB.selected}" style="border:0px;"></h:graphicImage>
+								</a4j:commandLink>								
+								<a4j:commandLink ajaxSingle="true"
+									reRender="modalPanel,estrategia"
+									title="Editar"
+									disabled="#{!gestionStockInsumosMB.selected}"
+									actionListener="#{gestionStockInsumosMB.renderPanel}">
+									<a4j:actionparam assignTo="#{gestionStockInsumosMB.action}" 
+										value="#{appVariables.actionUPDATE}"
+										actionListener="#{gestionStockInsumosMB.renderPanel}"></a4j:actionparam>
+									<h:graphicImage url="/images/editarSmallBtn.png" rendered="#{gestionStockInsumosMB.selected}" style="border:0px;"></h:graphicImage>
+									<h:graphicImage url="/images/editarSmallBtn-dis.png" rendered="#{!gestionStockInsumosMB.selected}" style="border:0px;"></h:graphicImage>
+								</a4j:commandLink>								
+							</h:panelGroup>
+							
+						</h:panelGrid>
+					</f:facet>
+					<h:outputText value="Nombre: "></h:outputText>
+					<h:outputText value="#{gestionStockInsumosMB.entity.nombre }"></h:outputText>
+					<h:outputText value="#{msgs.descripcion}: "></h:outputText>
+					<h:outputText value="#{gestionStockInsumosMB.entity.descripcion }"></h:outputText>
+					<h:outputText value="Unidad Madida"></h:outputText>
+					<h:outputText value="#{gestionStockInsumosMB.entity.unidadMedida.nombre }"></h:outputText>
+					
+					<h:outputText value="Estrategia Stock: "></h:outputText>
+					<h:outputText value="#{gestionStockInsumosMB.entity.estrategiaGestion.nombre}"></h:outputText>
+					<h:outputText value="#{msgs.costo_stock_inmovil}: "
+						rendered="#{gestionStockInsumosMB.renderStockOptimo }"></h:outputText>
+					<h:outputText value="#{gestionStockInsumosMB.entity.costoStockInmovil }"
+						rendered="#{gestionStockInsumosMB.renderStockOptimo }"></h:outputText>
+					<h:outputText value="#{msgs.reposicion}: "
+						rendered="#{gestionStockInsumosMB.renderManual }"></h:outputText>
+					<h:outputText value="#{gestionStockInsumosMB.entity.stockReposicion}" 
+						rendered="#{gestionStockInsumosMB.renderManual }"></h:outputText>
+					<h:outputText value="Costo Pedir: "
+						rendered="#{gestionStockInsumosMB.renderStockOptimo }"></h:outputText>
+					<h:outputText value="#{gestionStockInsumosMB.entity.costoTransaccionPedido }"
+						rendered="#{gestionStockInsumosMB.renderStockOptimo }"></h:outputText>
+					<h:outputText value="#{msgs.stock_max}: "
+						rendered="#{gestionStockInsumosMB.renderManual }"></h:outputText>
+					<h:outputText value="#{gestionStockInsumosMB.entity.stockMaximo}" 
+						rendered="#{gestionStockInsumosMB.renderManual }"></h:outputText>
+				</h:panelGrid>
+			</h:panelGrid>
+		</a4j:form>		
+	</ui:define>
+	
+	<ui:define name="panel">
+		<h:panelGroup id="modalPanel">
+			<rich:modalPanel  width="750" resizeable="false" moveable="false" autosized="true"
+				rendered="#{gestionStockInsumosMB.renderPanel}" showWhenRendered="true">
+				<f:facet name="header">
+					<h:outputText value="#{msgs.gestion_estrategia_stock}"></h:outputText>
+				</f:facet>
+				<rich:messages globalOnly="true"></rich:messages>
+				<a4j:form>					
+					<h:panelGrid columns="2" width="100%" 
+						columnClasses="ABMColumnLabel,ABMColumnInput" >
+						<h:outputText value="Estrategia: "></h:outputText>		
+						<rich:comboBox value="#{gestionStockInsumosMB.estrategias.itemSelected}">
+							<a4j:support event="onselect" 
+								reRender="estrategia"
+								ajaxSingle="true"
+								actionListener="#{gestionStockInsumosMB.selectEstrategia }"></a4j:support>
+							<f:selectItems value="#{gestionStockInsumosMB.estrategias.items}"></f:selectItems>
+						</rich:comboBox>																				
+					</h:panelGrid>
+					<h:panelGroup id="estrategia">
+						<h:panelGrid columns="3" width="100%" id="Manual" rendered="#{gestionStockInsumosMB.manual}"
+							columnClasses="ABMColumnLabel,ABMColumnOutput,">
+							<h:outputText value="#{msgs.insumo_stock_max} "></h:outputText>
+							<custom:inputText value="#{gestionStockInsumosMB.entity.stockMaximo}" 
+								id="Insumo_stockMaximo" required="true"></custom:inputText>
+							<h:outputText value="#{gestionStockInsumosMB.entity.unidadMedida.nombre}"></h:outputText>
+							
+							<h:outputText value="Stock #{msgs.reposicion} "></h:outputText>
+							<custom:inputText value="#{gestionStockInsumosMB.entity.stockReposicion}" 
+								id="Insumo_stockReposicion" required="true"></custom:inputText>
+							<h:outputText value="#{gestionStockInsumosMB.entity.unidadMedida.nombre}"></h:outputText>
+						</h:panelGrid>
+						
+						<h:panelGrid columns="3" width="100%" id="StockOptimo" rendered="#{gestionStockInsumosMB.stockOptimo}"
+							columnClasses="ABMColumnLabel,ABMColumnOutput,">
+							<h:outputText value="Costo Stock Inmovil "></h:outputText>
+							<custom:inputText value="#{gestionStockInsumosMB.entity.costoStockInmovil}" 
+								id="Insumo_costoStockInmovil" required="true"></custom:inputText>
+							<h:outputText value=""></h:outputText>
+							
+							<h:outputText value="Costo Pedir "></h:outputText>
+							<custom:inputText value="#{gestionStockInsumosMB.entity.costoTransaccionPedido}" 
+								id="Insumo_costoTransaccionPedido" required="true"></custom:inputText>
+							<h:outputText value=""></h:outputText>
+							
+							<h:outputText value="#{msgs.insumo_stock_max} "></h:outputText>
+							<h:panelGroup>
+								<h:inputText value="#{gestionStockInsumosMB.entity.stockMaximo}" style="width:100%;background: #ECDCB2" 
+									id="stockMaximo" required="true">
+									<f:validateLongRange minimum="0"></f:validateLongRange>
+								</h:inputText>
+								<rich:message for="stockMaximo"></rich:message>
+							</h:panelGroup>							
+							<h:outputText value="#{gestionStockInsumosMB.entity.unidadMedida.nombre}"></h:outputText>
+						</h:panelGrid>
+					</h:panelGroup>				
+						
+					<h:panelGrid style="width:100%;text-align:right;">
+						<h:panelGroup>
+							<a4j:commandButton value="#{msgs.aceptar}"
+								reRender="modalPanel,miForm"
+								actionListener="#{gestionStockInsumosMB.accept}"></a4j:commandButton>
+							<a4j:commandButton value="#{msgs.cancelar}"
+								ajaxSingle="true" 
+								reRender="modalPanel" 
+								actionListener="#{gestionStockInsumosMB.cancel}"></a4j:commandButton>							
+						</h:panelGroup>
+					</h:panelGrid>
+				</a4j:form>
+			</rich:modalPanel>
+		</h:panelGroup>
+	</ui:define>
+	
+</ui:composition>
+

@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:custom="http://code.google.com/p/sandia-project/custom">
+
+<ui:composition template="/templates/template.jspx">
+	<ui:define name="title">
+		<h:outputText value="Diagramar Produccion"></h:outputText>
+	</ui:define>
+
+	<ui:define name="content">
+		<a4j:form>
+			<h:panelGrid columns="2" width="100%"
+				columnClasses="marcoColumna50,marcoColumna50">
+				<h:panelGrid width="100%" headerClass="rich-table-subheadercell">
+					<f:facet name="header">
+						<h:outputText value="Pedidos para Produccion"></h:outputText>
+					</f:facet>
+					<rich:tree switchType="ajax" id="pedidos" 
+						binding="#{diagramarProduccionMB.treePedidos }" >												
+						<rich:treeNodesAdaptor var="item" 
+							nodes="#{diagramarProduccionMB.pedidos.content}">
+							<rich:treeNode id="pedido" iconCollapsed="/images/icons/pedido.png" 
+									iconExpanded="/images/icons/pedido_abierto.png"
+									icon="">
+								<h:selectBooleanCheckbox value="#{item.selected}">
+									<a4j:support event="onchange" reRender="pedidos,entities" 
+										actionListener="#{diagramarProduccionMB.selectPedido}"></a4j:support>
+								</h:selectBooleanCheckbox>
+								<h:outputText value="#{item.entity.cliente.razonSocial}"></h:outputText>
+								<h:outputText value=" - "></h:outputText>
+								<h:outputText value="Pedido:  " ></h:outputText>
+								<h:outputText value="#{item.entity.id}"></h:outputText>
+							</rich:treeNode>
+							<rich:treeNodesAdaptor nodes="#{item.detail}" var="detail">
+								<rich:treeNode icon="/images/icons/producto25x25.png" iconLeaf="/images/icons/producto25x25.png">
+									<h:selectBooleanCheckbox value="#{detail.selected}">
+										<a4j:support event="onchange" reRender="pedidos,entities" 
+										actionListener="#{diagramarProduccionMB.selectPedido}"></a4j:support>
+									</h:selectBooleanCheckbox>
+									<h:outputText value="#{detail.entity.producto.nombre}"></h:outputText>
+									<h:outputText value=" - Cantidad: " ></h:outputText>
+									<h:outputText value="#{detail.entity.cantidad}"></h:outputText>
+									<h:outputText value=" #{detail.entity.producto.unidadMedida.nombre}"></h:outputText>
+								</rich:treeNode>
+							</rich:treeNodesAdaptor>
+						</rich:treeNodesAdaptor>
+					</rich:tree>
+				</h:panelGrid>
+
+				<h:panelGrid width="100%" headerClass="rich-table-subheadercell">
+					<f:facet name="header">
+						<h:outputText value="Productos"></h:outputText>
+					</f:facet>
+					<rich:dataTable value="#{diagramarProduccionMB.productos.model}"
+						id="entities" var="item">
+						<rich:column>							
+							<f:facet name="header">
+								<h:outputText value="Seleccion"></h:outputText>
+							</f:facet>
+							<h:selectBooleanCheckbox value="#{item.selected}">
+								<a4j:support event="onclick" reRender="pedidos,entities"
+									actionListener="#{diagramarProduccionMB.selectProducto}"></a4j:support>
+							</h:selectBooleanCheckbox>
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Nombre"></h:outputText>
+							</f:facet>
+							<h:outputText value="#{item.entity.producto.nombre}"></h:outputText>
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Demanda"></h:outputText>
+							</f:facet>
+							<h:outputText value="#{item.entity.cantidadDemanda}"></h:outputText>
+							<h:outputText value="  #{item.entity.producto.unidadMedida.nombre}"></h:outputText>
+						</rich:column>
+						
+						<rich:column style="text-align: left;">
+							<f:facet name="header">
+								<h:outputText value="Excedente"></h:outputText>
+							</f:facet>
+							<h:inputText style="width: 50%" value="#{item.entity.cantidadExcedente}">
+								<a4j:support event="onblur" reRender="total"></a4j:support>
+							</h:inputText>							
+							<h:outputText value="  #{item.entity.producto.unidadMedida.nombre}"></h:outputText>
+						</rich:column>
+						<rich:column id="total">
+							<f:facet name="header">
+								<h:outputText value="Total"></h:outputText>
+							</f:facet>
+							<h:outputText value="#{item.entity.total}"></h:outputText>
+							<h:outputText value="  #{item.entity.producto.unidadMedida.nombre}"></h:outputText>
+						</rich:column>
+					</rich:dataTable>
+				</h:panelGrid>
+			</h:panelGrid>
+			<h:panelGrid columns="1" style="width:100%;text-align:right;">
+				<a4j:commandButton value="Volver"				
+					action="#{diagramarProduccionMB.volver}"></a4j:commandButton>
+			</h:panelGrid>
+		</a4j:form>		
+	</ui:define>	
+</ui:composition>
+</html>

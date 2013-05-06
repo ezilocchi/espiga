@@ -1,0 +1,274 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:custom="http://code.google.com/p/sandia-project/custom">
+
+<ui:composition template="/templates/template.jspx">
+	<ui:define name="title">
+		<h:outputText value="#{msgs.diagramar_distribucion}"></h:outputText>
+	</ui:define>
+
+	<ui:define name="content">
+		<a4j:form>
+			<h:panelGrid columns="2" width="100%"
+					columnClasses="marcoColumna50,marcoColumna50">
+					<h:panelGrid width="100%" headerClass="rich-table-subheadercell">
+						<f:facet name="header">
+							<h:outputText value="Pedidos Asignados"></h:outputText>
+						</f:facet>
+						<rich:dataTable var="item" id="pedidosAsignados"
+							value="#{diagramarDistribucionMB.pedidosAsignados.model}"
+							onRowMouseOver="this.style.backgroundColor='#F3E8C9'"
+							onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+							
+							<f:facet name="header">
+								<h:panelGrid columns="2" width="100%">
+									<h:outputText value="Responsable: "></h:outputText>
+									<a4j:region>
+										<rich:comboBox id="tipos"
+											value="#{diagramarDistribucionMB.empleados.itemSelected}">
+											<a4j:support event="onselect" reRender="pedidosAsignados"
+												actionListener="#{diagramarDistribucionMB.selectEmpleado}"></a4j:support>
+											<f:selectItems value="#{diagramarDistribucionMB.empleados.items}"/>
+										</rich:comboBox>
+									</a4j:region>									
+								</h:panelGrid>
+							</f:facet>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{msgs.nro_pedido}"></h:outputText>
+								</f:facet>
+								<h:outputText value="#{item.entity.id}"></h:outputText>
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="Cliente"></h:outputText>
+								</f:facet>
+								<h:outputText value="#{item.entity.cliente.razonSocial}"></h:outputText>
+							</rich:column>
+							<rich:column>	
+								<f:facet name="header">
+									<h:outputText value="#{msgs.direccion}"></h:outputText>
+								</f:facet>
+								<h:outputText value="#{item.entity.cliente.direccion}"></h:outputText>
+							</rich:column>
+							<rich:column id="asignados">
+								<f:facet name="header">
+									<h:panelGroup>
+										<h:selectBooleanCheckbox>
+											<a4j:support 
+												event="onchange" 
+												reRender="asignados" 
+												id="selectAsignados"
+												ajaxSingle="true" 
+												actionListener="#{diagramarDistribucionMB.selectCheck}"></a4j:support>
+										</h:selectBooleanCheckbox>
+										<a4j:commandButton image="/images/arrow_right_blue.ico" reRender="pedidosNoAsignados,pedidosAsignados"
+											actionListener="#{diagramarDistribucionMB.desasignarPedidos}"></a4j:commandButton>
+									</h:panelGroup>									
+								</f:facet>
+								<h:selectBooleanCheckbox value="#{item.selected}"></h:selectBooleanCheckbox>
+							</rich:column>
+						</rich:dataTable>
+					</h:panelGrid>
+	
+					<h:panelGrid width="100%" headerClass="rich-table-subheadercell">
+						<f:facet name="header">
+							<h:outputText value="Pedidos No Asignados"></h:outputText>
+						</f:facet>
+						<rich:dataTable value="#{diagramarDistribucionMB.pedidosNoAsignados.model}"
+							var="item" style="text-align: center;" width="100%" id="pedidosNoAsignados">							
+							<rich:column id="noAsignados">
+								<f:facet name="header">
+									<h:panelGroup>
+										<a4j:commandButton image="/images/arrow_left_blue.ico" reRender="pedidosAsignados,pedidosNoAsignados"
+											actionListener="#{diagramarDistribucionMB.asignarPedidos}"></a4j:commandButton>
+										<h:selectBooleanCheckbox>
+											<a4j:support event="onchange" 
+												reRender="noAsignados" 
+												id="selectNoAsignados"
+												ajaxSingle="true" 
+												actionListener="#{diagramarDistribucionMB.selectCheck}"></a4j:support>
+										</h:selectBooleanCheckbox>										
+									</h:panelGroup>
+								</f:facet>
+								<h:selectBooleanCheckbox value="#{item.selected}"
+									disabled="#{item.entity.incompleate }"></h:selectBooleanCheckbox>
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{msgs.nro_pedido}"></h:outputText>
+								</f:facet>
+								<h:outputText value="#{item.entity.id}"></h:outputText>
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{msgs.entidad_venta}"></h:outputText>
+								</f:facet>
+								<h:outputText value="#{item.entity.cliente.razonSocial}"></h:outputText>
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="Zona"></h:outputText>
+								</f:facet>
+								<h:outputText value="#{item.entity.zona.nombre}"></h:outputText>
+							</rich:column>						
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="Detalle"></h:outputText>
+								</f:facet>
+								<a4j:commandButton 
+									image="/images/find.png" 
+									actionListener="#{diagramarDistribucionMB.verPedido }"
+									reRender="modalPanel"></a4j:commandButton>
+							</rich:column>
+						</rich:dataTable>
+					</h:panelGrid>
+				</h:panelGrid>
+	
+				<h:panelGrid rowClasses="rowButton" width="100%">
+				<h:panelGroup>
+					<a4j:commandButton value="Aceptar"
+						action="#{diagramarDistribucionMB.volver}"></a4j:commandButton>
+						<a4j:commandButton value="Cancelar"
+						action="#{diagramarDistribucionMB.volver}"></a4j:commandButton>
+				</h:panelGroup>
+				</h:panelGrid>		
+		</a4j:form>
+		
+		<h:panelGroup id="modalPanel">
+			<rich:modalPanel  width="550" resizeable="false" moveable="false" autosized="true"
+				rendered="#{diagramarDistribucionMB.renderPedido}" showWhenRendered="true">
+				<f:facet name="header">
+					<h:outputText value="Pedido"></h:outputText>
+				</f:facet>
+				<rich:messages globalOnly="true"></rich:messages>
+				<a4j:form>
+					<h:panelGrid columnClasses="marcoColumna" width="100%">
+						<h:panelGrid columns="2" width="100%"
+							headerClass="rich-table-subheadercell">
+							<f:facet name="header">
+								<h:outputText value="Pedido"></h:outputText>
+							</f:facet>
+							<h:panelGrid columns="2" width="100%"
+								columnClasses="ABMColumnLabel,ABMColumnOutput">
+								<h:outputText value="Nro: "></h:outputText>
+								<h:outputText value="#{diagramarDistribucionMB.pedido.id}"></h:outputText>
+								<h:outputText value="#{msgs.entidad_venta}"></h:outputText>
+								<h:outputText
+									value="#{diagramarDistribucionMB.pedido.cliente.razonSocial}"></h:outputText>
+							</h:panelGrid>
+							<h:panelGrid columns="2" width="100%"
+								columnClasses="ABMColumnLabel,ABMColumnOutput">
+								<h:outputText value="Fecha: "></h:outputText>
+								<h:outputText value="#{diagramarDistribucionMB.pedido.fecha}">
+									<f:convertDateTime dateStyle="short" timeZone="Etc/GMT-2" />
+								</h:outputText>
+								<h:outputText value="Fecha Entrega: "></h:outputText>
+								<h:outputText value="#{diagramarDistribucionMB.pedido.fechaEntrega}">
+									<f:convertDateTime dateStyle="short" timeZone="Etc/GMT-2" />
+								</h:outputText>
+							</h:panelGrid>
+						</h:panelGrid>
+						<rich:dataTable value="#{diagramarDistribucionMB.detallePedido.model}"
+							id="detalle" var="item" width="100%"
+							columnsWidth="25%,25%,12%,12%,14%,12%">
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{msgs.producto_tipo}"></h:outputText>
+								</f:facet>
+								<h:outputText value="#{item.producto.tipo.nombre}"></h:outputText>
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{msgs.producto}"></h:outputText>
+								</f:facet>
+								<h:outputText value="#{item.producto.nombre}"></h:outputText>
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{msgs.producto_cantidad}"></h:outputText>
+								</f:facet>
+								<h:outputText value="#{item.cantidad} "></h:outputText>
+								<h:outputText value="#{item.producto.unidadMedida.nombre}"></h:outputText>
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{msgs.producto_precio_lista}"></h:outputText>
+								</f:facet>
+								<h:panelGroup>
+								<h:outputText value="$"></h:outputText>
+								<h:outputText value="#{item.producto.precioLista}">
+								<f:convertNumber maxFractionDigits="2"/></h:outputText>
+								</h:panelGroup>
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="#{msgs.producto_precio_venta}"></h:outputText>
+								</f:facet>
+								<h:panelGroup>
+								<h:outputText value="$"></h:outputText>
+								<h:outputText value="#{item.precioVentaUnitario}"
+									style="width:100%">
+								<f:convertNumber maxFractionDigits="2"/></h:outputText>
+								</h:panelGroup>
+							</rich:column>
+							<rich:column id="subTotal">
+								<f:facet name="header">
+									<h:outputText value="#{msgs.sub_total}"></h:outputText>
+								</f:facet>
+								<h:panelGroup>
+								<h:outputText value="$"></h:outputText>
+								<h:outputText value="#{item.cantidad*item.precioVentaUnitario}">
+									<f:convertNumber maxFractionDigits="2" />
+								</h:outputText>
+								</h:panelGroup>
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="Estado"></h:outputText>
+								</f:facet>								
+								<h:outputText value="#{item.estado.nombre}"></h:outputText>
+							</rich:column>
+							<f:facet name="footer">
+								<h:panelGrid rowClasses="rowButton" width="90%">
+									<h:panelGroup>
+										<a4j:commandLink value="eliminar detalle - " reRender="detalle"
+											actionListener="#{diagramarDistribucionMB.borrarDetalle}"
+											rendered="#{diagramarDistribucionMB.pedido.incompleate }"></a4j:commandLink>
+										<a4j:commandLink value="nuevo pedido - " reRender="detalle"
+											actionListener="#{diagramarDistribucionMB.nuevoPedido}"
+											rendered="#{diagramarDistribucionMB.pedido.incompleate }"></a4j:commandLink>
+										<h:outputText value="Total: "/>
+										<h:outputText value="$"/>
+										<h:outputText value="#{diagramarDistribucionMB.pedido.total}" id="total">
+											<f:convertNumber maxFractionDigits="2" />
+										</h:outputText>
+									</h:panelGroup>
+								</h:panelGrid>
+							</f:facet>
+						</rich:dataTable>
+					</h:panelGrid>
+					<h:panelGrid style="width:100%;text-align:right;">
+						<h:panelGroup>							
+							<a4j:commandButton value="Aceptar" 
+								reRender="modalPanel,pedidosNoAsignados" ajaxSingle="true"
+								actionListener="#{diagramarDistribucionMB.esconderPedido}"></a4j:commandButton>
+								<a4j:commandButton value="Canelar" 
+								reRender="modalPanel,pedidosNoAsignados" ajaxSingle="true"
+								actionListener="#{diagramarDistribucionMB.esconderPedido}"></a4j:commandButton>
+						</h:panelGroup>
+					</h:panelGrid>
+				</a4j:form>
+			</rich:modalPanel>
+		</h:panelGroup>		
+	</ui:define>
+		
+</ui:composition>
+</html>

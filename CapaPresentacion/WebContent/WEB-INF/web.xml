@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	id="WebApp_ID" version="2.5">
+	<display-name>CapaPresentacion</display-name>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>default.html</welcome-file>
+		<welcome-file>default.htm</welcome-file>
+		<welcome-file>default.jsp</welcome-file>
+	</welcome-file-list>
+	
+	<session-config>
+        <session-timeout>90</session-timeout>
+    </session-config>
+	
+	<!-- Paginas de error -->
+	<error-page>
+		<exception-type>javax.faces.application.ViewExpiredException</exception-type>
+		<location>/index.jsp</location>
+	</error-page> 
+
+	<!-- JSF -->
+	<servlet>
+		<servlet-name>Faces Servlet</servlet-name>
+		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>*.jspx</url-pattern>
+	</servlet-mapping>
+	<context-param>
+		<param-name>javax.faces.CONFIG_FILES</param-name>
+		<param-value>
+			/WEB-INF/faces-config.xml,
+			/WEB-INF/faces-navigation.xml,
+			/WEB-INF/faces-managed.xml					
+		</param-value>
+	</context-param>
+
+	<!-- RichFaces -->
+	<context-param>
+		<param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+		<param-value>server</param-value>
+	</context-param>
+	<context-param>
+		<param-name>org.richfaces.SKIN</param-name>
+		<param-value>sandia</param-value>
+	</context-param>
+	<context-param>
+		<param-name>org.richfaces.CONTROL_SKINNING</param-name>
+		<param-value>enable</param-value>
+	</context-param>
+	<filter>
+		<display-name>RichFaces Filter</display-name>
+		<filter-name>richfaces</filter-name>
+		<filter-class>org.ajax4jsf.Filter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>richfaces</filter-name>
+		<servlet-name>Faces Servlet</servlet-name>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>INCLUDE</dispatcher>
+	</filter-mapping>
+
+	<!-- FACELETS -->
+	<context-param>
+		<param-name>javax.faces.DEFAULT_SUFFIX</param-name>
+		<param-value>.jspx</param-value>
+	</context-param>
+	<context-param>
+		<param-name>facelets.LIBRARIES</param-name>
+		<param-value>
+			/WEB-INF/facelets/facelets.taglib.xml
+		</param-value>
+	</context-param>
+
+	<!-- SECURITY -->
+	<login-config>
+		<auth-method>FORM</auth-method>
+		<form-login-config>
+			<form-login-page>/login.jspx</form-login-page>
+			<form-error-page>/loginError.jspx</form-error-page>
+		</form-login-config>
+	</login-config>
+	
+	<!--Perfiles de Usuarios -->
+	<security-role>
+		<description>Administrador</description>
+		<role-name>ADMINISTRADOR</role-name>
+	</security-role>
+	<security-role>
+		<description>Panadero</description>
+		<role-name>PANADERO</role-name>
+	</security-role>
+	<security-role>
+		<description>Distribuidor</description>
+		<role-name>DISTRIBUIDOR</role-name>
+	</security-role>
+	<security-role>
+		<description>Maestro Panadero</description>
+		<role-name>RESPONSABLE_DE_PRODUCCION</role-name>
+	</security-role>
+	<security-role>
+		<description>Jefe Distribucion</description>
+		<role-name>RESPONSABLE_DE_DISTRIBUCION</role-name>
+	</security-role>
+	<security-role>
+		<description>Responsable Stock</description>
+		<role-name>RESPONSABLE_DE_STOCK</role-name>
+	</security-role>
+	<security-role>
+		<description>ROOT</description>
+		<role-name>SUPER_USUARIO</role-name>
+	</security-role>
+	
+	<!-- Restricciones de Seguridad -->
+	
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Administrator Authentication Policy</web-resource-name>
+			<url-pattern>/modules/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>ADMINISTRADOR</role-name>
+			<role-name>PANADERO</role-name>
+			<role-name>DISTRIBUIDOR</role-name>
+			<role-name>RESPONSABLE_DE_PRODUCCION</role-name>
+			<role-name>RESPONSABLE_DE_DISTRIBUCION</role-name>
+			<role-name>RESPONSABLE_DE_STOCK</role-name>
+			<role-name>SUPER_USUARIO</role-name>
+		</auth-constraint>	
+	</security-constraint>
+	
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>General Authentication Policy</web-resource-name>
+			<url-pattern>/modules/inicio.jspx</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>ADMINISTRADOR</role-name>
+			<role-name>PANADERO</role-name>
+			<role-name>DISTRIBUIDOR</role-name>
+			<role-name>RESPONSABLE_DE_PRODUCCION</role-name>
+			<role-name>RESPONSABLE_DE_DISTRIBUCION</role-name>
+			<role-name>RESPONSABLE_DE_STOCK</role-name>
+			<role-name>SUPER_USUARIO</role-name>
+		</auth-constraint>
+	</security-constraint>	
+
+</web-app>

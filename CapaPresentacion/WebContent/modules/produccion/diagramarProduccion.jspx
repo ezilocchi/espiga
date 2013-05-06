@@ -1,0 +1,273 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition template="/templates/template.jspx"
+				xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:a4j="http://richfaces.org/a4j"
+				xmlns:rich="http://richfaces.org/rich"
+				xmlns:custom="http://code.google.com/p/sandia-project/custom">
+				
+	<ui:define name="title">
+		<h:outputText value="#{msgs.diagramar_produccion}"></h:outputText>
+	</ui:define>
+
+	<ui:define name="content">
+		<rich:dragIndicator id="indicator" ></rich:dragIndicator>
+		<a4j:form>		
+			<h:outputText value="Seleccione una fecha con pedidos pendientes"></h:outputText>			
+			<h:panelGrid columns="3">
+				<h:outputText value="Fecha: "></h:outputText>
+				<rich:calendar value="#{diagramarProduccionMB.fechaEntrega}"
+					datePattern="dd/MM/yyyy">
+					<a4j:support event="onchanged" reRender="diagramacion,btnModificar"
+						actionListener="#{diagramarProduccionMB.seleccionFecha}"></a4j:support>
+				</rich:calendar>
+				<a4j:commandLink ajaxSingle="true" title="Editar" id="btnModificar"
+					disabled="#{!diagramarProduccionMB.diagramacionSelected}"
+					action="#{diagramarProduccionMB.modificarDiagramacion}">
+					<f:setPropertyActionListener value="#{appVariables.actionNEW}" target="#{diagramarProduccionMB.action}" />				
+					<h:graphicImage url="/images/editarSmallBtn.png"
+						rendered="#{diagramarProduccionMB.diagramacionSelected}" 
+						style="border:0px;"></h:graphicImage>
+					<h:graphicImage url="/images/editarSmallBtn-dis.png"
+						rendered="#{!diagramarProduccionMB.diagramacionSelected}" 
+						style="border:0px;"></h:graphicImage>
+				</a4j:commandLink>			
+			</h:panelGrid>
+			<h:panelGrid columns="2" width="100%"
+				columnClasses="marcoColumna30,marcoColumna70">
+				<h:panelGrid width="100%" headerClass="rich-table-subheadercell">
+					<f:facet name="header">
+						<h:outputText value="Empleados"></h:outputText>
+					</f:facet>
+					<rich:dataTable value="#{diagramarProduccionMB.empleados.model}"
+						id="entities" var="item" 
+						onRowMouseOver="this.style.backgroundColor='#F3E8C9'"
+						onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">						
+						<rich:column >							
+							<a4j:outputPanel layout="block">								
+								<rich:dragSupport dragIndicator=":indicator" 
+									dragType="addEmpleado" dragValue="#{item}">
+									<rich:dndParam name="label" value="#{item.apellido}, #{item.nombres}" />
+								</rich:dragSupport>
+								<rich:dropSupport acceptedTypes="removeEmpleado" 
+									dropListener="#{diagramarProduccionMB.removeEmpleado}" reRender="diagramacion"></rich:dropSupport>
+								<h:outputText value="#{item.apellido}, #{item.nombres}"></h:outputText>
+							</a4j:outputPanel>
+						</rich:column>						
+					</rich:dataTable>
+				</h:panelGrid>
+
+				<h:panelGrid width="100%" headerClass="rich-table-subheadercell">
+					<f:facet name="header">
+						<h:outputText value="Productos"></h:outputText>
+					</f:facet>
+					<rich:tree id="diagramacion" switchType="ajax" 
+						binding="#{diagramarProduccionMB.treeDiagramacion}">						
+						<rich:treeNodesAdaptor 
+							nodes="#{diagramarProduccionMB.productos.content}" var="item">
+							<rich:treeNode icon="/images/icons/producto25x25.png" iconLeaf="/images/icons/producto25x25.png">								
+								<rich:dropSupport acceptedTypes="addEmpleado" dropValue="#{item.entity}"
+									dropListener="#{diagramarProduccionMB.addEmpleado}" reRender="entities,diagramacion"></rich:dropSupport>								
+								<h:outputText value="#{item.entity.producto.nombre }"></h:outputText>
+								<h:outputText value=": "></h:outputText>
+								<h:outputText value="#{item.entity.total}"></h:outputText>
+								<h:outputText value="  #{item.entity.producto.unidadMedida.nombre }"></h:outputText>
+								<h:outputText value=" - Receta: "></h:outputText>
+								<a4j:commandLink value="#{item.entity.receta.nombre}" 
+									actionListener="#{diagramarProduccionMB.buscarReceta }"
+									reRender="buscadorRecetas"></a4j:commandLink>									
+							</rich:treeNode>
+							<rich:treeNodesAdaptor nodes="#{diagramarProduccionMB.nodos}" var="node">
+								<rich:treeNode rendered="#{diagramarProduccionMB.p == node}"
+									icon="/images/icons/PanaderosGroup_25x25.png" iconLeaf="/images/icons/PanaderosGroup_25x25.png">
+									<h:outputText value="#{node}"></h:outputText>
+								</rich:treeNode>
+								<rich:treeNodesAdaptor var="detalle" nodes="#{item.entity.detalle }" rendered="#{diagramarProduccionMB.p == node}">
+									<rich:treeNode icon="/images/icons/panadero25x25.png" iconLeaf="/images/icons/panadero25x25.png">
+										<rich:dragSupport dragIndicator=":indicator" 
+											dragType="removeEmpleado" dragValue="#{detalle}">
+											<rich:dndParam name="label" value="#{detalle.empleado.apellido }, #{detalle.empleado.nombres}" />
+										</rich:dragSupport>
+										<h:outputText value="#{detalle.empleado.apellido }, #{detalle.empleado.nombres}"></h:outputText>
+									</rich:treeNode> 
+								</rich:treeNodesAdaptor>
+								
+								<rich:treeNode rendered="#{diagramarProduccionMB.i == node}"
+									icon="/images/icons/Insumos_Group_25x25.png" iconLeaf="/images/icons/Insumos_Group_25x25.png">
+									<h:outputText value="#{node}"></h:outputText>
+								</rich:treeNode>
+								<rich:treeNodesAdaptor var="detalle" nodes="#{item.entity.receta.detalle }" rendered="#{diagramarProduccionMB.i == node}">
+									<rich:treeNode icon="/images/icons/insumos35x35.png" iconLeaf="/images/icons/insumos35x35.png">						
+										<h:outputText value="#{detalle.insumo.nombre}"></h:outputText>				
+										<h:outputText value=": "></h:outputText>
+										<h:outputText value="#{item.entity.total/item.entity.receta.cantidadResultante*detalle.cantidad}">
+											<f:convertNumber maxFractionDigits="2"/>
+										</h:outputText>
+										<h:outputText value="  #{detalle.insumo.unidadMedida.nombre}"></h:outputText>
+									</rich:treeNode> 
+								</rich:treeNodesAdaptor>
+								
+							</rich:treeNodesAdaptor>							
+						</rich:treeNodesAdaptor>
+					</rich:tree>
+				</h:panelGrid>
+			</h:panelGrid>
+			
+			<h:panelGrid style="width:100%;text-align:right;">
+				<h:panelGroup>
+					
+					<a4j:commandButton value="Aceptar"
+						actionListener="#{diagramarProduccionMB.aceptar}"
+						reRender="panelResultado"
+						ajaxSingle="true">
+					</a4j:commandButton>
+					<a4j:commandButton value="Cancelar" ajaxSingle="true"
+						action="#{diagramarProduccionMB.cancelar}"></a4j:commandButton>
+				</h:panelGroup>
+			</h:panelGrid>
+		</a4j:form>
+	</ui:define>
+	
+	<ui:define name="panel">
+		<h:panelGroup id="buscadorRecetas">					
+			<rich:modalPanel
+				moveable="false"
+				resizeable="false"
+				autosized="true"
+				width="750"				
+				rendered="#{diagramarProduccionMB.renderBuscador}"
+				showWhenRendered="true">
+				<a4j:form>
+					<h:panelGrid columns="3" width="100%"				
+						columnClasses="marcoColumna70,marcoColumna30">
+						<a4j:region>
+							<rich:dataTable value="#{gestionRecetaMB.maestros.model}" var="item" id="recetas"
+								onRowMouseOver="this.style.backgroundColor='#F3E8C9'"  rows="10"
+								onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"
+								columnsWidth="70%,30%">
+								<a4j:support event="onRowClick" reRender="detalle,btnAceptar"
+									actionListener="#{gestionRecetaMB.selectMaestro}"></a4j:support>
+								<custom:simpleColumn row="#{item.nombre}" cabecera="Recetas"/>
+								<custom:simpleColumn row="#{item.cantidadResultante} #{item.producto.unidadMedida.nombre}" cabecera="Resultante"/>
+								<f:facet name="footer">
+									 <rich:datascroller for="recetas" maxPages="20"/>
+								</f:facet>			
+							</rich:dataTable>
+						</a4j:region>
+						<a4j:region>
+							<rich:dataTable value="#{gestionRecetaMB.detalles.model}" var="item" id="detalle"
+								onRowMouseOver="this.style.backgroundColor='#F3E8C9'"
+								onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+								<custom:simpleColumn row="#{item.insumo.nombre }" cabecera="#{msgs.insumo }"/>
+								<custom:simpleColumn row="#{item.cantidad} #{item.insumo.unidadMedida.nombre}" cabecera="Cantidad"/>								
+							</rich:dataTable>
+						</a4j:region>				
+					</h:panelGrid>
+					<h:panelGrid rowClasses="rowButton" width="100%">
+						<h:panelGroup style="text-align: left">
+							<a4j:commandButton actionListener="#{diagramarProduccionMB.selectReceta}"
+								ajaxSingle="true"
+								value="Aceptar" 										
+								title="Aceptar" 
+								id="btnAceptar"
+								disabled="#{!gestionRecetaMB.maestroSelected}"
+								reRender="buscadorRecetas,diagramacion">							
+							</a4j:commandButton>
+							<a4j:commandButton value="Cancelar" ajaxSingle="true" 
+								actionListener="#{diagramarProduccionMB.volver}" 
+								reRender="buscadorRecetas"></a4j:commandButton>					
+						</h:panelGroup>
+					</h:panelGrid>
+				</a4j:form>
+			</rich:modalPanel>
+		</h:panelGroup>
+		
+		<h:panelGroup id="panelResultado">
+			<rich:modalPanel width="750" resizeable="false" moveable="false"
+				autosized="true" rendered="#{diagramarProduccionMB.renderPanelResultado}"
+				showWhenRendered="true">
+				<f:facet name="header">
+					<h:outputText value="Resultado #{msgs.produccion }"></h:outputText>
+				</f:facet>
+				<a4j:form>
+					<h:panelGrid columnClasses="marcoColumna50,marcoColumna50" width="100%" columns="2">						
+						<rich:dataTable value="#{diagramarProduccionMB.productos.content}"
+							id="productos" var="item" width="100%">
+							<f:facet name="header">
+								<h:outputText value="Productos Resultantes"></h:outputText>
+							</f:facet>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="Tipo"></h:outputText>
+								</f:facet>
+								<h:outputText value="#{item.entity.producto.tipo.nombre}"></h:outputText>
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="Producto"></h:outputText>
+								</f:facet>
+								<h:outputText value="#{item.entity.producto.nombre}"></h:outputText>
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="Cantidad"></h:outputText>
+								</f:facet>
+								<h:outputText value="#{item.entity.total} "></h:outputText>
+								<h:outputText value="#{item.entity.producto.unidadMedida.nombre}"></h:outputText>
+							</rich:column>							
+						</rich:dataTable>
+						
+						<rich:dataTable value="#{diagramarProduccionMB.diagramacion.totalInsumosEstimados}"
+							id="insumos" var="item" width="100%"
+							columnsWidth="40%,40%,20%">
+							<f:facet name="header">
+								<h:outputText value="Insumos Necesarios"></h:outputText>
+							</f:facet>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="Nombre"></h:outputText>
+								</f:facet>
+								<h:outputText value="#{item.key.nombre}"></h:outputText>
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="Stock Necesaria"></h:outputText>
+								</f:facet>
+								<h:outputText value="#{item.value} ">
+									<f:convertNumber maxFractionDigits="2" />
+								</h:outputText>
+								<h:outputText value="#{item.key.unidadMedida.nombre}"></h:outputText>
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="Stock Disponible"></h:outputText>
+								</f:facet>
+								<h:outputText value="#{item.key.stockDisponible} ">
+									<f:convertNumber maxFractionDigits="2" />
+								</h:outputText>
+								<h:outputText value="#{item.key.unidadMedida.nombre}"></h:outputText>
+							</rich:column>
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="Stock"></h:outputText>
+								</f:facet>
+								<h:graphicImage url="/images/StockDisponible_20x20.png" rendered="#{(item.key.stockDisponible - item.value) ge 0}" style="border:0px;"></h:graphicImage>
+								<h:graphicImage url="/images/StockNoDisponible_20x20.png" rendered="#{(item.key.stockDisponible - item.value) lt 0}" style="border:0px;"></h:graphicImage>								
+							</rich:column>							
+						</rich:dataTable>						
+					</h:panelGrid>
+					<h:panelGrid rowClasses="rowButton" width="100%">
+						<h:panelGroup>							
+							<a4j:commandButton value="#{msgs.aceptar}"	action="#{diagramarProduccionMB.confirmar}" reRender="panelResultado"></a4j:commandButton>
+							<a4j:commandButton value="#{msgs.cancelar}" actionListener="#{diagramarProduccionMB.hide}" ajaxSingle="true" reRender="panelResultado"></a4j:commandButton>					
+						</h:panelGroup>
+					</h:panelGrid>
+				</a4j:form>
+			</rich:modalPanel>
+		</h:panelGroup>	
+	</ui:define>	
+</ui:composition>

@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition template="/templates/template.jspx"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:custom="http://code.google.com/p/sandia-project/custom">		 
+	
+		<ui:define name="script">
+		<a4j:loadScript src="resource:///script/selectRow.js"></a4j:loadScript>
+	</ui:define> 
+	
+	<ui:define name="content">  
+<!--		<script type="text/javascript">					-->
+<!--			function filtro() {								-->
+<!--				obj = document.getElementById('miForm:entities:btnFiltrar');				-->
+<!--				obj.click();							-->
+<!--			}-->
+<!--				-->
+<!--		</script>  	-->
+		
+		<a4j:form id="miForm">
+		
+			<h:panelGrid columns="2" width="100%" id="panel"
+				columnClasses="columnaMaestro,columnaDetalle">
+				<rich:dataTable value="#{managedBean.entities.model}"
+					id="entities" var="item" headerClass="rich-table-subheadercell">
+					<f:facet name="header">					
+						<h:panelGrid columns="2" width="100%"
+							columnClasses=",ABMColumnLabel">
+							<h:outputText value="#{entitiesTitle}"></h:outputText>
+							<h:panelGroup>		
+								<a4j:commandButton image="/images/icons/LimpiarFiltros_25x25.png"  id="btnLimpiarFiltrar" 
+									reRender="entities" actionListener="#{managedBean.limpiarFiltro }" title="Limpiar Filtro"></a4j:commandButton>
+								<a4j:commandButton image="/images/find.png" id="btnFiltrar" 
+									reRender="entities" actionListener="#{managedBean.buscar }" title="Filtrar"></a4j:commandButton>										
+								<h:commandLink target="_new" actionListener="#{managedBean.print}">
+									<h:graphicImage url="/images/icons/Impresora_01_25x25.png" 
+										style="border:0px;" title="Imprimir Listado"></h:graphicImage>
+								</h:commandLink>
+							</h:panelGroup>												
+						</h:panelGrid>
+					</f:facet>												
+					<a4j:support event="onRowClick" 
+						reRender="entity,subDetail" 
+						actionListener="#{managedBean.selectEntity}"
+						oncomplete="selectRow(this)"></a4j:support>						
+					<ui:insert name="dataTableContent"></ui:insert>						
+				</rich:dataTable>
+				
+				<h:panelGrid width="100%" columnClasses="marcoColumna" id="entity"
+					headerClass="rich-table-subheadercell">
+					<f:facet name="header">
+						<h:panelGrid columns="2" width="100%"
+							columnClasses=",ABMColumnLabel">
+							<h:outputText value="#{entityTitle}"></h:outputText>
+							
+							<h:panelGroup>
+								<a4j:commandButton ajaxSingle="true"
+									reRender="modalPanel"
+									title="Nuevo" 
+									image="/images/sinonimoSmall.png">
+									<a4j:actionparam assignTo="#{managedBean.action}" 
+										value="#{appVariables.actionNEW}"
+										actionListener="#{managedBean.renderPanel}"></a4j:actionparam>
+								</a4j:commandButton>
+								<a4j:commandLink ajaxSingle="true"
+									reRender="modalPanel"
+									title="Editar"
+									disabled="#{!managedBean.selected}"
+									actionListener="#{managedBean.renderPanel}">
+									<a4j:actionparam assignTo="#{managedBean.action}" 
+										value="#{appVariables.actionUPDATE}"
+										actionListener="#{managedBean.renderPanel}"></a4j:actionparam>
+									<h:graphicImage url="/images/editarSmallBtn.png" rendered="#{managedBean.selected}" style="border:0px;"></h:graphicImage>
+									<h:graphicImage url="/images/editarSmallBtn-dis.png" rendered="#{!managedBean.selected}" style="border:0px;"></h:graphicImage>
+								</a4j:commandLink>
+								<a4j:commandLink actionListener="#{managedBean.delete}"
+									ajaxSingle="true" 
+									reRender="panel"
+									title="Borrar" 
+									disabled="#{!managedBean.selected}"
+									onclick="javascript:if (!confirm('Confirma que desea borrar'))return false;">
+									<h:graphicImage url="/images/eliminarSmallBtn.png" rendered="#{managedBean.selected}" style="border:0px;"></h:graphicImage>
+									<h:graphicImage url="/images/eliminarSmallBtn-dis.png" rendered="#{!managedBean.selected}" style="border:0px;"></h:graphicImage>
+								</a4j:commandLink>
+							</h:panelGroup>
+							
+						</h:panelGrid>
+					</f:facet>
+					
+					<h:panelGrid columns="2" headerClass="rich-table-subheadercell"
+						columnClasses="ABMColumnLabel,ABMColumnOutput" width="100%">						
+						<ui:insert name="entity"></ui:insert>												
+					</h:panelGrid>
+					<h:panelGroup id="subDetail">
+						<ui:insert name="entityDetail"></ui:insert>
+					</h:panelGroup>					
+				</h:panelGrid>
+			</h:panelGrid>
+		</a4j:form>		
+	</ui:define>
+	
+	<ui:define name="panel">
+		<h:panelGroup id="modalPanel">
+			<rich:modalPanel  width="550" resizeable="false" moveable="false" autosized="true"
+				rendered="#{managedBean.renderPanel}" showWhenRendered="true">
+				<f:facet name="header">
+					<h:outputText value="#{entityTitle}"></h:outputText>
+				</f:facet>
+				<rich:messages globalOnly="true"></rich:messages>
+				<a4j:form>
+					<h:panelGrid columnClasses="marcoColumna" width="100%">
+						<h:panelGrid columns="2" width="100%" 
+							columnClasses="ABMColumnLabel,ABMColumnInput" >
+							<ui:insert name="panelContent"></ui:insert>														
+						</h:panelGrid>
+					</h:panelGrid>
+					<h:panelGrid style="width:100%;text-align:right;">
+						<h:panelGroup>
+							<a4j:commandButton value="#{msgs.aceptar}"
+								reRender="modalPanel,panel"
+								actionListener="#{managedBean.accept}"></a4j:commandButton>
+							<a4j:commandButton value="#{msgs.cancelar}"
+								ajaxSingle="true" 
+								reRender="modalPanel,entity" 
+								actionListener="#{managedBean.cancel}"></a4j:commandButton>
+							<a4j:commandButton value="#{msgs.limpiar}"
+								ajaxSingle="true" 
+								type="reset"></a4j:commandButton>
+						</h:panelGroup>
+					</h:panelGrid>
+				</a4j:form>
+			</rich:modalPanel>
+		</h:panelGroup>
+		<ui:insert name="panelDetail"/>
+	</ui:define>
+	
+</ui:composition>
+

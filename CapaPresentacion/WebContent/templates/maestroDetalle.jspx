@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition template="/templates/template.jspx"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:custom="http://code.google.com/p/sandia-project/custom">
+	
+	<ui:define name="script">
+		<a4j:loadScript src="resource:///script/selectRow.js"></a4j:loadScript>
+	</ui:define>
+	
+	<ui:define name="content">
+		<a4j:form id="form">
+			<h:panelGrid columns="2" width="100%" id="panel"
+				columnClasses="columnaMaestro,columnaDetalle">
+				<rich:dataTable value="#{managedBean.maestros.model}" 
+					id="maestro" width="100%"  
+					var="item" headerClass="rich-table-subheadercell">												
+					<a4j:support event="onRowClick" 
+						reRender="detalle,headerMaestro" 
+						actionListener="#{managedBean.selectMaestro}"
+						oncomplete="selectRow(this)"/>			
+					<f:facet name="header">
+						<h:panelGroup id="headerMaestro">
+							<ui:insert name="headerMaestro"></ui:insert>
+						</h:panelGroup>
+					</f:facet>			
+					<ui:insert name="tableMaestro"></ui:insert>						
+				</rich:dataTable>
+				<h:panelGrid headerClass="rich-table-subheadercell" 
+					width="100%" id="detalle">
+					<f:facet name="header">
+						<ui:insert name="headerDetalle"></ui:insert>
+					</f:facet>
+					<ui:insert name="contentDetalle"></ui:insert>			
+				</h:panelGrid>
+			</h:panelGrid>
+			<ui:insert name="footer"></ui:insert>
+		</a4j:form>		
+	</ui:define>
+			
+	
+</ui:composition>
+

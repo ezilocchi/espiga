@@ -1,0 +1,154 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:custom="http://code.google.com/p/sandia-project/custom">
+
+<ui:composition template="/templates/template.jspx">
+	<ui:define name="title">
+		<h:outputText value="#{msgs.diagramacion_distribucion}"></h:outputText>
+	</ui:define>
+	<ui:define name="script">
+		<a4j:loadScript src="resource:///script/selectRow.js"></a4j:loadScript>
+	</ui:define>
+	<ui:define name="content">
+		<a4j:form>
+			<h:panelGrid columns="4" id="panelFecha">
+				<h:outputText value="#{msgs.fecha}"></h:outputText>
+				<rich:calendar datePattern="dd/MM/yyyy" id="DiagramacionDistribucion_fechaEntrega"
+					value="#{diagramarDistribucionMB.fecha}" >
+					<a4j:support event="onchanged" reRender="diagramacion,panelFecha"
+						actionListener="#{diagramarDistribucionMB.seleccionFecha}"></a4j:support>
+				</rich:calendar>				
+				<a4j:commandLink action="#{diagramarDistribucionMB.modificarDiagramacion}" id="msgPedidos"
+					value="Existen pedidos sin asignar" rendered="#{diagramarDistribucionMB.pedidosDesasignados }"/>				
+			</h:panelGrid>
+			<h:panelGrid columns="2" width="100%" id="diagramacion"
+				columnClasses="marcoColumna50,marcoColumna50">
+				<rich:dataTable var="item" id="maestros"
+					value="#{diagramarDistribucionMB.maestros.model}">			
+					<f:facet name="header">
+						<h:outputText value="Asignaciones"></h:outputText>
+					</f:facet>
+					<rich:column>
+						<a4j:support event="onclick" reRender="detalle" 
+							actionListener="#{diagramarDistribucionMB.selectMaestro}"
+							oncomplete="selectRow(this)"/>
+						<f:facet name="header">
+							<h:outputText value="Responsable"></h:outputText>
+						</f:facet>
+						<h:outputText value="#{item.empleado.apellido}, #{item.empleado.nombres}"></h:outputText>						
+					</rich:column>					
+					<rich:column >
+						<a4j:support event="onclick" reRender="detalle" 
+							actionListener="#{diagramarDistribucionMB.selectMaestro}"
+							oncomplete="selectRow(this)"/>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.vehiculo}"></h:outputText>
+						</f:facet>
+						<h:outputText value="#{item.vehiculo.modelo}" ></h:outputText>
+					</rich:column>					
+					<rich:column>
+						<f:facet name="header">
+							<h:outputText value="Acciones"></h:outputText>
+						</f:facet>
+						<a4j:commandButton image="/images/icons/camion25x25.png" 
+							actionListener="#{diagramarDistribucionMB.renderPanel}"
+							reRender="modalPanel" style="margin-right: opx"></a4j:commandButton>
+						<a4j:commandButton image="/images/editarSmallBtn.png" 
+							action="#{diagramarDistribucionMB.modificarDiagramacionMaestro}">
+							<f:setPropertyActionListener value="#{appVariables.actionNEW}" target="#{diagramarDistribucionMB.action}" />
+						</a4j:commandButton>
+					</rich:column>
+				</rich:dataTable>
+
+				<rich:dataTable id="detalle" var="item"  
+					value="#{diagramarDistribucionMB.pedidosAsignados.model}"
+					style="text-align: center;">
+					<f:facet name="header">
+						<h:outputText value="#{msgs.pedidos_asignados}"></h:outputText>
+					</f:facet>
+					<rich:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.nro_pedido}"></h:outputText>
+						</f:facet>
+						<h:outputText value="#{item.entity.id}"></h:outputText>
+					</rich:column>
+					<rich:column>
+						<f:facet name="header">
+							<h:outputText value="Cliente"></h:outputText>
+						</f:facet>
+						<h:outputText value="#{item.entity.cliente.razonSocial}"></h:outputText>
+					</rich:column>
+					<rich:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.direccion}"></h:outputText>
+						</f:facet>
+						<h:outputText value="#{item.entity.cliente.direccion.barrio.zona.nombre}"></h:outputText>
+					</rich:column>
+					<rich:column>
+						<f:facet name="header">
+							<h:outputText value="#{msgs.direccion}"></h:outputText>
+						</f:facet>
+						<h:outputText value="#{item.entity.cliente.direccion}"></h:outputText>
+					</rich:column>
+				</rich:dataTable>
+			</h:panelGrid>
+			
+			<h:panelGrid style="width:100%;text-align:right;">
+				<h:panelGroup>
+					<a4j:commandButton value="Aceptar"
+						action="#{diagramarDistribucionMB.aceptar}"></a4j:commandButton>
+					<a4j:commandButton value="Cancelar" ajaxSingle="true"
+						action="#{diagramarDistribucionMB.cancelar}"></a4j:commandButton>
+				</h:panelGroup>
+			</h:panelGrid>
+		</a4j:form>
+	</ui:define>
+		
+	<ui:define name="panel">
+		<h:panelGroup id="modalPanel">
+			<rich:modalPanel  width="750" resizeable="false" moveable="false" autosized="true"
+				rendered="#{diagramarDistribucionMB.renderPanel}" showWhenRendered="true">
+				<f:facet name="header">
+					<h:outputText value="#{msgs.seleccion_vehiculos}"></h:outputText>
+				</f:facet>
+				<a4j:form>
+					<rich:dataTable var="item" 
+					value="#{diagramarDistribucionMB.vehiculos.model}"					 
+					onRowMouseOver="this.style.backgroundColor='#F3E8C9'"
+					onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+						<a4j:support event="onRowClick" reRender="maestros,modalPanel" 
+							actionListener="#{diagramarDistribucionMB.selectVehiculo}"/>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Modelo"></h:outputText>
+							</f:facet>
+							<h:outputText value="#{item.modelo }"></h:outputText>
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Marca"></h:outputText>
+							</f:facet>
+							<h:outputText value="#{item.marca }"></h:outputText>
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Dominio"></h:outputText>
+							</f:facet>
+							<h:outputText value="#{item.dominio }"></h:outputText>
+						</rich:column>
+					</rich:dataTable>
+					<a4j:commandButton value="cancelar" reRender="modalPanel"
+						actionListener="#{diagramarDistribucionMB.hidePanel}"></a4j:commandButton>
+				</a4j:form>
+			</rich:modalPanel>
+		</h:panelGroup>
+	</ui:define>
+</ui:composition>
+</html>

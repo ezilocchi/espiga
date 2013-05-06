@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+<rich:panel
+	style="top: 30%; left: 35%; position: absolute; width: 330px; height: 150px;">
+	<f:facet name="header">
+		<h:outputText value="#{msgs.login}"></h:outputText>
+	</f:facet>	
+	<h:panelGrid columns="1">
+		<form name="loginForm" method="post" action="#{facesContext.externalContext.requestContextPath}/j_security_check">
+			<table width="100%" >
+				<tr>
+					<td width="10%">User Name:</td>
+					<td width="30%"><input type="text" name="j_username"></input></td>
+					<td width="60%" rowspan="2" align="center"><img src="/CapaPresentacion/images/logo2.png" alt=""/></td>
+				</tr>
+				<tr>
+					<td>Password:</td>
+					<td><input type="password" name="j_password"></input></td>
+				</tr>
+				<tr>
+					<td/>
+					<td width="100%"><input type="submit" value="Login" style="margin-right: 10px"></input></td>
+				</tr>
+			</table>
+		</form>
+		<h:outputLabel>
+			<rich:messages></rich:messages>
+		</h:outputLabel>
+	</h:panelGrid>
+</rich:panel>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition template="/templates/template.jspx"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:custom="http://code.google.com/p/sandia-project/custom">
+
+	<ui:define name="content">
+		<a4j:form>
+			<rich:dataTable var="item" value="#{generarOrdenCompraMB.detalle.model }" id="insumos">
+				<custom:simpleColumn cabecera="Insumo" row="#{item.insumo.nombre}"/>
+				<custom:simpleColumn cabecera="Stock" 
+					row="#{item.insumo.stockDisponible}  #{item.insumo.unidadMedida.nombre}"/>
+				<custom:simpleColumn cabecera="Stock Maximo" 
+					row="#{item.insumo.stockMaximo} #{item.insumo.unidadMedida.nombre}"/> 
+				<custom:simpleColumn cabecera="Punto Reposicion" 
+					row="#{item.insumo.stockReposicion} #{item.insumo.unidadMedida.nombre}"/>				
+				<rich:column>
+					<f:facet name="header">
+						<h:outputText value="Cantidad"></h:outputText>
+					</f:facet>
+					<h:inputText value="#{item.cantidad}">
+						<a4j:support event="onblur" reRender="ingreso,subTotal,total"></a4j:support>
+					</h:inputText>
+				</rich:column>
+				<rich:column>
+					<f:facet name="header">
+						<h:outputText value="Unidad"></h:outputText>
+					</f:facet>
+					<a4j:commandLink value="#{item.unidadMedida.nombre}" 
+						actionListener="#{generarOrdenCompraMB.renderPanelUnidades }"
+						reRender="panelUnidades"></a4j:commandLink>					
+				</rich:column>
+				<rich:column>
+					<f:facet name="header">
+						<h:outputText value="Precio Unitario"></h:outputText>
+					</f:facet>
+					<h:inputText value="#{item.precioUnitario}">
+						<a4j:support event="onblur" reRender="subTotal,total"></a4j:support>
+					</h:inputText>					
+				</rich:column>								
+				<rich:column id="ingreso">
+					<f:facet name="header">
+						<h:outputText value="Ingreso"></h:outputText>
+					</f:facet>					
+					<h:outputText value=" #{item.ingreso}"></h:outputText>
+					<h:outputText value=" #{item.insumo.unidadMedida.nombre}"></h:outputText>
+				</rich:column>
+				<rich:column id="subTotal">
+					<f:facet name="header">
+						<h:outputText value="Sub Total"></h:outputText>
+					</f:facet>
+					<h:outputText value="$"></h:outputText>					
+					<h:outputText value=" #{item.subTotal}"></h:outputText>					
+				</rich:column>
+				<f:facet name="footer">
+					<h:panelGrid rowClasses="rowButton" width="90%">
+						<h:panelGroup>
+							<h:outputText value="TOTAL: $" />
+							<h:outputText value="#{generarOrdenCompraMB.orden.total}"
+								id="total">
+								<f:convertNumber maxFractionDigits="2" />
+							</h:outputText>
+						</h:panelGroup>
+					</h:panelGrid>
+				</f:facet>
+			</rich:dataTable>
+			<h:panelGrid rowClasses="rowButton" width="100%">
+				<h:panelGroup>
+					<a4j:commandButton value="#{msgs.aceptar}"	actionListener="#{generarOrdenCompraMB.aceptar}" reRender="panelConfirmar"></a4j:commandButton>
+					<a4j:commandButton value="#{msgs.cancelar}" action="#{generarOrdenCompraMB.cancelar}" ajaxSingle="true"></a4j:commandButton>					
+				</h:panelGroup>
+			</h:panelGrid>
+		</a4j:form>
+	</ui:define>
+
+	
+	<ui:define name="panel">
+		<h:panelGroup id="panelProveedores">
+			<rich:modalPanel
+				width="750"
+				minHeight="400"
+				moveable="false"
+				resizeable="false"
+				autosized="true"
+				rendered="#{generarOrdenCompraMB.renderProveedores}"
+				showWhenRendered="true">
+				<f:facet name="header">
+					<h:outputText value="#{msgs.seleccion_proveedor}"></h:outputText>
+				</f:facet>
+				<a4j:form>
+					<rich:dataTable var="item" value="#{generarOrdenCompraMB.proveedores.model }"
+						headerClass="rich-table-subheadercell"
+						onRowMouseOver="this.style.backgroundColor='#F3E8C9'"
+						onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+						<a4j:support event="onRowClick" 
+							reRender="panelProveedores,insumos" 
+							actionListener="#{generarOrdenCompraMB.selectProveedor}"></a4j:support>						
+						<custom:simpleColumn cabecera="#{msgs.razon_social }" row="#{item.razonSocial}"/>
+						<custom:simpleColumn cabecera="#{msgs.telefono}" row="#{item.telefono}"/>
+						<custom:simpleColumn cabecera="Mail" row="#{item.mail}"/>
+						<custom:simpleColumn cabecera="#{msgs.direccion}" row="#{item.direccion}"/>
+					</rich:dataTable>
+					<h:panelGrid rowClasses="rowButton" width="100%">
+						<h:panelGroup style="text-align: left">							
+							<a4j:commandButton value="Cancelar" 
+								ajaxSingle="true"
+								action="loginOk"></a4j:commandButton>					
+						</h:panelGroup>
+					</h:panelGrid>
+				</a4j:form>			
+			</rich:modalPanel>
+		</h:panelGroup>
+		
+		<h:panelGroup id="panelUnidades">
+			<rich:modalPanel
+				width="750"
+				maxHeight="400"
+				moveable="false"
+				resizeable="false"
+				autosized="true"
+				rendered="#{generarOrdenCompraMB.renderUnidades}"
+				showWhenRendered="true">
+				<a4j:form>
+					<rich:dataTable var="item" value="#{generarOrdenCompraMB.unidades.model }"
+						onRowMouseOver="this.style.backgroundColor='#ECF4FE'"
+						onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+						<a4j:support event="onRowClick" 
+							reRender="panelUnidades,insumos" 
+							actionListener="#{generarOrdenCompraMB.selectUnidad}"></a4j:support>
+						<custom:simpleColumn cabecera="Nombre" row="#{item.nombre}"/>
+						<custom:simpleColumn cabecera="Precio" row="#{item.nombre}"/>
+						<custom:simpleColumn cabecera="Cantidad" row="#{item.nombre}"/>
+						<custom:simpleColumn cabecera="Unidad Insumo" row="#{item.insumo.unidadMedida.nombre}"/>
+					</rich:dataTable>
+					<h:panelGrid rowClasses="rowButton" width="100%">
+						<h:panelGroup style="text-align: left">							
+							<a4j:commandButton image="/images/cancelarSmallBtn.png" ajaxSingle="true" 
+								actionListener="#{generarOrdenCompraMB.hideUnidades}" 
+								reRender="panelUnidades"></a4j:commandButton>					
+						</h:panelGroup>
+					</h:panelGrid>
+				</a4j:form>			
+			</rich:modalPanel>
+		</h:panelGroup>
+		
+		<h:panelGroup id="panelConfirmar">
+			<rich:modalPanel width="750" resizeable="false" moveable="false"
+				autosized="true" rendered="#{generarOrdenCompraMB.renderConfirmar}"
+				showWhenRendered="true">
+				<f:facet name="header">
+					<h:outputText value="Orden Compra"></h:outputText>
+				</f:facet>
+				<a4j:form>
+					<h:panelGrid columnClasses="marcoColumna" width="100%">
+						<h:panelGrid columns="2" width="100%"
+							headerClass="rich-table-subheadercell">							
+							<h:panelGrid columns="2" width="100%"
+								columnClasses="ABMColumnLabel,ABMColumnOutput">
+								<h:outputText value="Proveedor: "></h:outputText>								
+								<h:outputText value="#{generarOrdenCompraMB.proveedorSelected.razonSocial }"></h:outputText>
+								<h:outputText value="#{msgs.direccion}: "></h:outputText>								
+								<h:outputText value="#{generarOrdenCompraMB.proveedorSelected.direccion}"></h:outputText>
+								<h:outputText value="Telefono: "></h:outputText>								
+								<h:outputText value="#{generarOrdenCompraMB.proveedorSelected.telefono}"></h:outputText>
+								<h:outputText value="Mail: "></h:outputText>								
+								<h:outputText value="#{generarOrdenCompraMB.proveedorSelected.mail}"></h:outputText>								
+							</h:panelGrid>							
+						</h:panelGrid>
+						<rich:dataTable value="#{generarOrdenCompraMB.detalle.model}"
+							id="detalle" var="item" width="100%">
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="Insumo"></h:outputText>
+								</f:facet>
+								<h:outputText value="#{item.insumo.nombre}"/>
+							</rich:column>											
+							<rich:column>
+								<f:facet name="header">
+									<h:outputText value="Cantidad "></h:outputText>
+								</f:facet>
+								<h:outputText value="#{item.cantidad} - "/>
+								<h:outputText value="#{item.unidadMedida.nombre}"/>					
+							</rich:column>							
+							<rich:column id="subTotal">
+								<f:facet name="header">
+									<h:outputText value="Sub Total"></h:outputText>
+								</f:facet>
+								<h:panelGroup>
+									<h:outputText value="$"></h:outputText>					
+									<h:outputText value=" #{item.subTotal}"></h:outputText>
+								</h:panelGroup>					
+							</rich:column>
+							<f:facet name="footer">
+								<h:panelGrid rowClasses="rowButton" width="90%">
+									<h:panelGroup>
+										<h:outputText value="TOTAL: $" />
+										<h:outputText value="#{generarOrdenCompraMB.orden.total}"
+											id="total">
+											<f:convertNumber maxFractionDigits="2" />
+										</h:outputText>
+									</h:panelGroup>
+								</h:panelGrid>
+							</f:facet>
+						</rich:dataTable>
+					</h:panelGrid>
+					<h:panelGrid rowClasses="rowButton" width="100%">
+						<h:panelGroup>
+							<a4j:commandButton value="#{msgs.aceptar}"	action="#{generarOrdenCompraMB.confirmar}"></a4j:commandButton>
+							<a4j:commandButton value="#{msgs.cancelar}" actionListener="#{generarOrdenCompraMB.hide}" ajaxSingle="true" reRender="panelConfirmar"></a4j:commandButton>					
+						</h:panelGroup>
+					</h:panelGrid>					
+				</a4j:form>
+			</rich:modalPanel>
+		</h:panelGroup>
+	</ui:define>
+	
+</ui:composition>
+

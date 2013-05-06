@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition template="/templates/maestroDetalle.jspx"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:custom="http://code.google.com/p/sandia-project/custom">
+
+	<ui:param name="managedBean" value="#{asignarZonaEmpleadoMB}"></ui:param>	
+
+	<ui:define name="title">
+		<h:outputText value="Asignar Zona Empleado"></h:outputText>
+	</ui:define>
+
+	<ui:define name="headerMaestro">		
+		<h:outputText value="Empleados"></h:outputText>	
+	</ui:define>
+	<ui:define name="tableMaestro">
+		<custom:textColumn row="#{item.apellido}" cabecera="#{msgs.apellido }" filtro="#{managedBean.filtroMaestro.apellido}"></custom:textColumn>
+		<custom:textColumn row="#{item.nombres}" cabecera="Nombres" filtro="#{managedBean.filtroMaestro.nombres}"></custom:textColumn>		
+	</ui:define>
+	<ui:define name="headerDetalle">		
+		<h:outputText value="Zonas"></h:outputText>
+	</ui:define>
+	<ui:define name="contentDetalle">		
+		<rich:pickList value="#{asignarZonaEmpleadoMB.zonas.itemsSelected}" style="width: 100%" sourceListWidth="250" targetListWidth="250">
+			<a4j:support event="onlistchange" actionListener="#{asignarZonaEmpleadoMB.cambio}" 
+				reRender="btnGuardar"></a4j:support>
+			<f:selectItems value="#{asignarZonaEmpleadoMB.zonas.items}"/>
+		</rich:pickList>
+		<a4j:commandButton value="Guardar" id="btnGuardar" disabled="#{!asignarZonaEmpleadoMB.modificado }"
+			actionListener="#{asignarZonaEmpleadoMB.guardar }" reRender="btnGuardar"></a4j:commandButton>
+		
+	</ui:define>
+</ui:composition>

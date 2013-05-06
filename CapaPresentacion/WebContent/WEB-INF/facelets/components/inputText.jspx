@@ -1,0 +1,19 @@
+<ui:component 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+		
+	<h:panelGroup rendered="#{!required}">
+		<h:inputText value="#{value}" style="width:100%" 
+			id="#{id}" required="false"></h:inputText>
+		<rich:message for="#{id}"></rich:message>
+	</h:panelGroup>	
+	<h:panelGroup rendered="#{required}">
+		<h:inputText value="#{value}" style="width:100%;background: #ECDCB2" 
+			id="#{id}r" required="true"></h:inputText>
+		<rich:message for="#{id}r"></rich:message>
+	</h:panelGroup>
+</ui:component>	

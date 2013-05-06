@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition template="/templates/maestroDetalleABM.jspx"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:custom="http://code.google.com/p/sandia-project/custom">
+
+	<ui:param name="managedBean" value="#{gestionRecetaMB}"></ui:param>
+	<ui:param name="entityTitle" value="#{msgs.receta}"></ui:param>
+	<ui:param name="entitiesTitle" value="#{msgs.detalle}"></ui:param>	
+
+	<ui:define name="title">
+		<h:outputText value="#{msgs.receta_gestion}"></h:outputText>
+	</ui:define>
+
+	<ui:define name="tableMaestro">
+		<rich:column>
+			<f:facet name="header">
+				<h:outputText value="#{msgs.receta_fecha_alta}"></h:outputText>
+			</f:facet>
+			<h:outputText value="#{item.fechaAlta}">
+				<f:convertDateTime dateStyle="short" timeZone="Etc/GMT-2" />
+			</h:outputText>
+		</rich:column>
+		<custom:simpleColumn row="#{item.nombre }" cabecera="#{msgs.nombre}"/>
+		<custom:simpleColumn row="#{item.producto.nombre}" cabecera="Producto"/>
+		<custom:simpleColumn row="#{item.producto.tipo.nombre }" cabecera="Tipo"/>
+		<custom:simpleColumn row="#{item.cantidadResultante} #{item.producto.unidadMedida.nombre}" cabecera="Resultante"/>
+		
+		<rich:column>
+			<f:facet name="header">
+				<h:outputText value="Pred"></h:outputText>
+			</f:facet>
+			<h:selectBooleanCheckbox disabled="true"
+				value="#{item.predeterminada}"></h:selectBooleanCheckbox>
+		</rich:column>
+	</ui:define>
+
+	<ui:define name="tableDetalle">
+		<custom:simpleColumn row="#{item.insumo.nombre }" cabecera="#{msgs.insumo }"/>
+		<custom:simpleColumn row="#{item.cantidad}" cabecera="Cantidad"/>
+		<custom:simpleColumn row="#{item.insumo.unidadMedida.nombre}" cabecera="Unidad"/>		
+	</ui:define>
+
+	<ui:define name="titleMaestro">
+		<h:panelGrid columns="3">
+			<h:outputText value="Seleccione Tipo y Producto:"></h:outputText>
+			<rich:comboBox id="Receta_tipoProducto" width="100"
+				value="#{managedBean.tipos.itemSelected}">
+				<a4j:support event="onselect" 
+					reRender="Receta_producto"
+					ajaxSingle="true"
+					actionListener="#{managedBean.selectTipoProducto }"></a4j:support>
+				<f:selectItems value="#{managedBean.tipos.items}"></f:selectItems>
+			</rich:comboBox>
+			<rich:comboBox id="Receta_producto" width="100" 
+				value="#{managedBean.productos.itemSelected}">
+				<a4j:support event="onselect" 
+					reRender="maestro,detalle"
+					ajaxSingle="true" 
+					actionListener="#{managedBean.selectProducto}"></a4j:support>
+				<f:selectItems value="#{managedBean.productos.items}"></f:selectItems>
+			</rich:comboBox>			
+		</h:panelGrid>
+	</ui:define>
+	<ui:define name="titleDetalle">
+		<h:outputText value="#{msgs.detalle}"></h:outputText>
+	</ui:define>
+
+	<ui:define name="panelContentMaestro">
+		<h:outputText value="#{msgs.nombre}"></h:outputText>
+		<custom:inputText value="#{managedBean.maestro.nombre}" id="Receta_nombre" required="true"></custom:inputText>
+		
+		<h:outputText value="#{msgs.descripcion} "></h:outputText>
+		<custom:inputText value="#{managedBean.maestro.descripcion}" id="Receta_descripcion" required="false"></custom:inputText>	
+		
+		<h:outputText value="#{msgs.receta_cantidad_resultante} "></h:outputText>		
+		<h:panelGroup>
+			<h:inputText value="#{managedBean.maestro.cantidadResultante}"
+				style="width:80%;background: #ECDCB2" id="Receta_cantidadResultante" required="true"></h:inputText>
+			<h:outputText
+				value=" #{managedBean.productos.entitySelected.unidadMedida.nombre}" id="um_Maestro"></h:outputText>
+			<rich:message for="Receta_cantidadResultante"></rich:message>
+		</h:panelGroup>
+		 
+		<h:outputText value="#{msgs.receta_predeterminada} "></h:outputText>
+		<h:panelGroup>
+			<h:selectBooleanCheckbox id="Receta_predeterminada"
+				value="#{managedBean.maestro.predeterminada}"></h:selectBooleanCheckbox>
+			<rich:message for="Receta_predeterminada"></rich:message>
+		</h:panelGroup>
+	</ui:define>
+
+	<ui:define name="panelContentDetalle">
+		<h:outputText value="#{msgs.insumo} "></h:outputText>
+		<h:panelGroup>
+			<rich:comboBox id="Receta_insumo" required="true" value="#{managedBean.insumos.itemSelected}"
+			inputInactiveStyle="background: #ECDCB2" inputStyle="background: #ECDCB2">
+				<a4j:support event="onselect" reRender="um_Detalle"
+					ajaxSingle="true"></a4j:support>
+				<f:selectItems value="#{managedBean.insumos.items}"></f:selectItems>
+			</rich:comboBox>
+			<rich:message for="Receta_insumo"></rich:message>
+		</h:panelGroup>
+		<h:outputText value="#{msgs.cantidad} "></h:outputText>
+		<h:panelGroup>
+			<h:panelGroup>
+				<h:inputText value="#{managedBean.detalle.cantidad}"
+					id="Receta_cantidad" required="true" style="width:80%;background: #ECDCB2"></h:inputText>
+				<h:outputText
+					value=" #{managedBean.insumos.entitySelected.unidadMedida.nombre}" style="width:20%" id="um_Detalle"></h:outputText>
+			</h:panelGroup>
+			<rich:message for="Receta_cantidad"></rich:message>
+		</h:panelGroup>
+	</ui:define>
+
+</ui:composition>
+

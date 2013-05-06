@@ -1,0 +1,259 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition template="/templates/template.jspx"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:custom="http://code.google.com/p/sandia-project/custom">
+
+	<ui:define name="content">		
+		<a4j:form>
+			<h:panelGrid columns="3" width="100%" id="panelGeneral"
+				columnClasses="marcoColumna33,marcoColumna33,marcoColumna33">						
+				<a4j:region>			
+					<rich:dataTable value="#{gestionProvinciaLocalidadBarrioMB.maestros.model}"
+						var="item" id="provincias" headerClass="rich-table-subheadercell"
+						onRowMouseOver="this.style.backgroundColor='#F3E8C9'"
+						onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+						<f:facet name="header">
+							<h:panelGrid columns="2" width="100%"
+								columnClasses=",ABMColumnLabel">
+								<h:outputText value="Provincias"></h:outputText>
+								<h:panelGroup>									
+									<a4j:commandButton ajaxSingle="true"
+										reRender="panelProvincias"
+										title="Nuevo" 
+										image="/images/sinonimoSmall.png">
+										<a4j:actionparam assignTo="#{gestionProvinciaLocalidadBarrioMB.actionMaestro}" 
+											value="#{appVariables.actionNEW}"
+											actionListener="#{gestionProvinciaLocalidadBarrioMB.renderPanelMaestro}"></a4j:actionparam>
+									</a4j:commandButton>
+									<a4j:commandLink ajaxSingle="true"
+										reRender="panelProvincias"
+										title="Editar"
+										disabled="#{!gestionProvinciaLocalidadBarrioMB.maestroSelected}"
+										actionListener="#{gestionProvinciaLocalidadBarrioMB.renderPanelMaestro}">
+										<a4j:actionparam assignTo="#{gestionProvinciaLocalidadBarrioMB.actionMaestro}" 
+											value="#{appVariables.actionUPDATE}"
+											actionListener="#{gestionProvinciaLocalidadBarrioMB.renderPanelMaestro}"></a4j:actionparam>
+										<h:graphicImage url="/images/editarSmallBtn.png" rendered="#{gestionProvinciaLocalidadBarrioMB.maestroSelected}" style="border:0px;"></h:graphicImage>
+										<h:graphicImage url="/images/editarSmallBtn-dis.png" rendered="#{!gestionProvinciaLocalidadBarrioMB.maestroSelected}" style="border:0px;"></h:graphicImage>
+									</a4j:commandLink>
+									<a4j:commandLink actionListener="#{gestionProvinciaLocalidadBarrioMB.deleteMaestro}"
+										ajaxSingle="true" 
+										reRender="panelGeneral"
+										title="Borrar" 
+										disabled="#{!gestionProvinciaLocalidadBarrioMB.maestroSelected}"
+										onclick="javascript:if (!confirm('Confirma que desea borrar'))return false;">
+										<h:graphicImage url="/images/eliminarSmallBtn.png" rendered="#{gestionProvinciaLocalidadBarrioMB.maestroSelected}" style="border:0px;"></h:graphicImage>
+										<h:graphicImage url="/images/eliminarSmallBtn-dis.png" rendered="#{!gestionProvinciaLocalidadBarrioMB.maestroSelected}" style="border:0px;"></h:graphicImage>
+									</a4j:commandLink>
+								</h:panelGroup>
+							</h:panelGrid>
+						</f:facet>
+						<a4j:support event="onRowClick" reRender="provincias,localidades,barrios"
+							actionListener="#{gestionProvinciaLocalidadBarrioMB.selectMaestro}"></a4j:support>
+						<custom:textColumn row="#{item.nombre}"></custom:textColumn>
+					</rich:dataTable>
+				</a4j:region>
+				<a4j:region>
+					<rich:dataTable value="#{gestionProvinciaLocalidadBarrioMB.detalles.model}"
+						var="item" id="localidades" headerClass="rich-table-subheadercell"
+						onRowMouseOver="this.style.backgroundColor='#F3E8C9'"
+						onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'"						>
+						<f:facet name="header">
+							<h:panelGrid columns="2" width="100%">
+								<h:outputText value="Localidades"></h:outputText>
+								<h:panelGroup>									
+									<a4j:commandButton ajaxSingle="true"
+										reRender="panelLocalidades"
+										title="Nuevo" 
+										image="/images/sinonimoSmall.png">
+										<a4j:actionparam assignTo="#{gestionProvinciaLocalidadBarrioMB.actionDetalle}" 
+											value="#{appVariables.actionNEW}"
+											actionListener="#{gestionProvinciaLocalidadBarrioMB.renderPanelDetalle}"></a4j:actionparam>
+									</a4j:commandButton>
+									<a4j:commandLink ajaxSingle="true"
+										reRender="panelLocalidades"
+										title="Editar"
+										disabled="#{!gestionProvinciaLocalidadBarrioMB.detalleSelected}"
+										actionListener="#{gestionProvinciaLocalidadBarrioMB.renderPanelDetalle}">
+										<a4j:actionparam assignTo="#{gestionProvinciaLocalidadBarrioMB.actionDetalle}" 
+											value="#{appVariables.actionUPDATE}"
+											actionListener="#{gestionProvinciaLocalidadBarrioMB.renderPanelDetalle}"></a4j:actionparam>
+										<h:graphicImage url="/images/editarSmallBtn.png" rendered="#{gestionProvinciaLocalidadBarrioMB.detalleSelected}" style="border:0px;"></h:graphicImage>
+										<h:graphicImage url="/images/editarSmallBtn-dis.png" rendered="#{!gestionProvinciaLocalidadBarrioMB.detalleSelected}" style="border:0px;"></h:graphicImage>
+									</a4j:commandLink>
+									<a4j:commandLink actionListener="#{gestionProvinciaLocalidadBarrioMB.deleteDetalle}"
+										ajaxSingle="true" 
+										reRender="panelGeneral"
+										title="Borrar" 
+										disabled="#{!gestionProvinciaLocalidadBarrioMB.detalleSelected}"
+										onclick="javascript:if (!confirm('Confirma que desea borrar'))return false;">
+										<h:graphicImage url="/images/eliminarSmallBtn.png" rendered="#{gestionProvinciaLocalidadBarrioMB.detalleSelected}" style="border:0px;"></h:graphicImage>
+										<h:graphicImage url="/images/eliminarSmallBtn-dis.png" rendered="#{!gestionProvinciaLocalidadBarrioMB.detalleSelected}" style="border:0px;"></h:graphicImage>
+									</a4j:commandLink>
+								</h:panelGroup>
+							</h:panelGrid>
+						</f:facet>
+						<a4j:support event="onRowClick" reRender="localidades,barrios"
+							actionListener="#{gestionProvinciaLocalidadBarrioMB.selectDetalle}"></a4j:support>
+						<custom:textColumn row="#{item.nombre}"></custom:textColumn>
+					</rich:dataTable>
+				</a4j:region>
+				<a4j:region>
+					<rich:extendedDataTable value="#{gestionProvinciaLocalidadBarrioMB.barrios}" var="item"
+						id="barrios" headerClass="rich-table-subheadercell" 
+						selectionMode="single" sortMode="single" enableContextMenu="false" 
+						onRowMouseOver="this.style.backgroundColor='#F3E8C9'"
+						onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+						<f:facet name="header">
+							<h:panelGrid columns="2" width="100%">
+								<h:outputText value="Barrios"></h:outputText>
+								<h:panelGroup>									
+									<a4j:commandButton ajaxSingle="true"
+										reRender="panelBarrios"
+										title="Nuevo" 
+										image="/images/sinonimoSmall.png">
+										<a4j:actionparam assignTo="#{gestionProvinciaLocalidadBarrioMB.actionBarrio}" 
+											value="#{appVariables.actionNEW}"
+											actionListener="#{gestionProvinciaLocalidadBarrioMB.renderPanelBarrio}"></a4j:actionparam>
+									</a4j:commandButton>
+									<a4j:commandLink ajaxSingle="true"
+										reRender="panelBarrios"
+										title="Editar"
+										disabled="#{!gestionProvinciaLocalidadBarrioMB.barrioSelected}"
+										actionListener="#{gestionProvinciaLocalidadBarrioMB.renderPanelBarrio}">
+										<a4j:actionparam assignTo="#{gestionProvinciaLocalidadBarrioMB.actionBarrio}" 
+											value="#{appVariables.actionUPDATE}"
+											actionListener="#{gestionProvinciaLocalidadBarrioMB.renderPanelBarrio}"></a4j:actionparam>
+										<h:graphicImage url="/images/editarSmallBtn.png" rendered="#{gestionProvinciaLocalidadBarrioMB.barrioSelected}" style="border:0px;"></h:graphicImage>
+										<h:graphicImage url="/images/editarSmallBtn-dis.png" rendered="#{!gestionProvinciaLocalidadBarrioMB.barrioSelected}" style="border:0px;"></h:graphicImage>
+									</a4j:commandLink>
+									<a4j:commandLink actionListener="#{gestionProvinciaLocalidadBarrioMB.deleteMaestro}"
+										ajaxSingle="true" 
+										reRender="panelGeneral"
+										title="Borrar" 
+										disabled="#{!gestionProvinciaLocalidadBarrioMB.barrioSelected}"
+										onclick="javascript:if (!confirm('Confirma que desea borrar'))return false;">
+										<h:graphicImage url="/images/eliminarSmallBtn.png" rendered="#{gestionProvinciaLocalidadBarrioMB.barrioSelected}" style="border:0px;"></h:graphicImage>
+										<h:graphicImage url="/images/eliminarSmallBtn-dis.png" rendered="#{!gestionProvinciaLocalidadBarrioMB.barrioSelected}" style="border:0px;"></h:graphicImage>
+									</a4j:commandLink>
+								</h:panelGroup>
+							</h:panelGrid>
+						</f:facet>						
+						<custom:textColumn row="#{item.nombre}" width="100%"></custom:textColumn>
+					</rich:extendedDataTable>
+				</a4j:region>			
+			</h:panelGrid>
+		</a4j:form>		
+	</ui:define>
+	
+	<ui:define name="panel">
+		<h:panelGroup id="panelProvincias">
+			<rich:modalPanel  width="550" resizeable="false" moveable="false" autosized="true"
+				rendered="#{gestionProvinciaLocalidadBarrioMB.renderPanelMaestro}" showWhenRendered="true">
+				<f:facet name="header">
+					<h:outputText value="Nueva Provincia"></h:outputText>
+				</f:facet>
+				<rich:messages globalOnly="true"></rich:messages>				
+				<a4j:form>
+					<h:panelGrid columnClasses="marcoColumna" width="100%">
+						<h:panelGrid columns="2" width="100%" 
+							columnClasses="ABMColumnLabel,ABMColumnInput" >
+							<h:outputText value="Nombre "></h:outputText>
+							<custom:inputText required="true" value="#{gestionProvinciaLocalidadBarrioMB.maestro.nombre }" id="Provincia_nombre"></custom:inputText>												
+						</h:panelGrid>
+					</h:panelGrid>				
+					<h:panelGrid style="width:100%;text-align:right;">
+						<h:panelGroup>
+							<a4j:commandButton value="#{msgs.aceptar}"
+								reRender="panelProvincias,panelGeneral"
+								actionListener="#{gestionProvinciaLocalidadBarrioMB.acceptMaestro}"></a4j:commandButton>
+							<a4j:commandButton value="#{msgs.cancelar}"
+								ajaxSingle="true" 
+								reRender="panelProvincias" 
+								actionListener="#{gestionProvinciaLocalidadBarrioMB.cancelMaestro}"></a4j:commandButton>
+							<a4j:commandButton value="#{msgs.limpiar}"
+								ajaxSingle="true" 
+								type="reset"></a4j:commandButton>
+						</h:panelGroup>
+					</h:panelGrid>
+				</a4j:form>
+			</rich:modalPanel>
+		</h:panelGroup>
+		
+		<h:panelGroup id="panelLocalidades">
+			<rich:modalPanel  width="550" resizeable="false" moveable="false" autosized="true"
+				rendered="#{gestionProvinciaLocalidadBarrioMB.renderPanelDetalle}" showWhenRendered="true">
+				<f:facet name="header">
+					<h:outputText value="Nueva Localidad"></h:outputText>
+				</f:facet>
+				<rich:messages globalOnly="true"></rich:messages>
+				<a4j:form>
+					<h:panelGrid columnClasses="marcoColumna" width="100%">
+						<h:panelGrid columns="2" width="100%" 
+							columnClasses="ABMColumnLabel,ABMColumnInput" >
+							<h:outputText value="Nombre "></h:outputText>
+							<custom:inputText required="true" id="Localidad_nombre" 
+								value="#{gestionProvinciaLocalidadBarrioMB.detalle.nombre }"></custom:inputText>												
+						</h:panelGrid>
+					</h:panelGrid>				
+					<h:panelGrid style="width:100%;text-align:right;">
+						<h:panelGroup>
+							<a4j:commandButton value="#{msgs.aceptar}"
+								reRender="panelLocalidades,panelGeneral"
+								actionListener="#{gestionProvinciaLocalidadBarrioMB.acceptDetalle}"></a4j:commandButton>
+							<a4j:commandButton value="#{msgs.cancelar}"
+								ajaxSingle="true" 
+								reRender="panelLocalidades" 
+								actionListener="#{gestionProvinciaLocalidadBarrioMB.cancelDetalle}"></a4j:commandButton>
+							<a4j:commandButton value="#{msgs.limpiar}"
+								ajaxSingle="true" 
+								type="reset"></a4j:commandButton>
+						</h:panelGroup>
+					</h:panelGrid>
+				</a4j:form>
+			</rich:modalPanel>
+		</h:panelGroup>
+		
+		<h:panelGroup id="panelBarrios">
+			<rich:modalPanel  width="550" resizeable="false" moveable="false" autosized="true"
+				rendered="#{gestionProvinciaLocalidadBarrioMB.renderPanelBarrio}" showWhenRendered="true">
+				<f:facet name="header">
+					<h:outputText value="Nuevo Barrio"></h:outputText>
+				</f:facet>
+				<rich:messages globalOnly="true"></rich:messages>
+				<a4j:form>
+					<h:panelGrid columnClasses="marcoColumna" width="100%">
+						<h:panelGrid columns="2" width="100%" 
+							columnClasses="ABMColumnLabel,ABMColumnInput" >
+							<h:outputText value="Nombre "></h:outputText>
+							<custom:inputText required="true" id="Barrio_nombre" 
+								value="#{gestionProvinciaLocalidadBarrioMB.barrio.nombre }"></custom:inputText>												
+						</h:panelGrid>
+					</h:panelGrid>				
+					<h:panelGrid style="width:100%;text-align:right;">
+						<h:panelGroup>
+							<a4j:commandButton value="#{msgs.aceptar}"
+								reRender="panelBarrios,panelGeneral"
+								actionListener="#{gestionProvinciaLocalidadBarrioMB.acceptBarrio}"></a4j:commandButton>
+							<a4j:commandButton value="#{msgs.cancelar}"
+								ajaxSingle="true" 
+								reRender="panelBarrios" 
+								actionListener="#{gestionProvinciaLocalidadBarrioMB.cancelBarrio}"></a4j:commandButton>
+							<a4j:commandButton value="#{msgs.limpiar}"
+								ajaxSingle="true" 
+								type="reset"></a4j:commandButton>
+						</h:panelGroup>
+					</h:panelGrid>
+				</a4j:form>
+			</rich:modalPanel>
+		</h:panelGroup>
+	</ui:define>	
+ 
+</ui:composition>
